@@ -101,7 +101,7 @@ export const Login = () => {
             type="submit"
             className="w-full py-3 rounded-2xl bg-[#1E6091] hover:bg-brand-700 text-white font-extrabold text-xs shadow-lg transition flex items-center justify-center space-x-2 cursor-pointer mt-2"
           >
-            <span>Sign In to CRM Portal</span>
+            <span>Sign In</span>
             <ArrowRight className="h-4 w-4" />
           </button>
         </form>
