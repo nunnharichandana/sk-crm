@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { MOCK_POLICIES } from '../services/mockDataService';
 import { 
   RotateCcw, 
-  Send, 
   Mail, 
-  PhoneCall, 
   CheckCircle2, 
   AlertCircle,
-  Sparkles
+  Sparkles,
+  FileText
 } from 'lucide-react';
 
 export const Renewals = () => {
@@ -36,9 +35,14 @@ export const Renewals = () => {
     }
   ]);
 
-  const sendAutoReminder = (id, channel) => {
-    alert(`Triggered ${channel} renewal reminder for record ${id}! Notification logged in audit trail.`);
+  const sendEmailNotice = (id) => {
+    alert(`Official Email Renewal Notice dispatched for record ${id}! Notification logged in audit trail.`);
     setRenewalList(prev => prev.map(r => r.id === id ? { ...r, remindersSent: r.remindersSent + 1 } : r));
+  };
+
+  const processRenewal = (id, policyNumber) => {
+    alert(`Policy ${policyNumber} renewed successfully for FY 2026-27! New policy certificate issued.`);
+    setRenewalList(prev => prev.filter(r => r.id !== id));
   };
 
   return (
@@ -48,15 +52,15 @@ export const Renewals = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Policy Renewal & Retention Engine</h2>
-          <p className="text-xs text-slate-500">Automated SMS, WhatsApp & Email reminders for upcoming policy expiries</p>
+          <p className="text-xs text-slate-500">Official Email renewal notices & policy retention management for upcoming policy expiries</p>
         </div>
 
         <button 
-          onClick={() => alert("Batch-sending automated WhatsApp renewal reminders to all policies expiring in 30 days...")}
-          className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition"
+          onClick={() => alert("Batch-sending official Email renewal notices to all policies expiring in 30 days...")}
+          className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#1E6091] hover:bg-brand-700 text-white font-bold text-xs shadow transition"
         >
-          <Sparkles className="h-4 w-4" />
-          <span>Trigger Batch Reminders</span>
+          <Mail className="h-4 w-4" />
+          <span>Send Batch Email Notices</span>
         </button>
       </div>
 
@@ -74,9 +78,9 @@ export const Renewals = () => {
                 <th className="p-4">Policy / Customer</th>
                 <th className="p-4">Insurance Company</th>
                 <th className="p-4">Renewal Due Date</th>
-                <th className="p-4">Estimated Renewal Premium</th>
-                <th className="p-4">Reminders Triggered</th>
-                <th className="p-4 text-right">Instant Dispatch Actions</th>
+                <th className="p-4">Estimated Premium</th>
+                <th className="p-4">Notices Sent</th>
+                <th className="p-4 text-right">Renewal Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
@@ -93,23 +97,26 @@ export const Renewals = () => {
                   </td>
                   <td className="p-4 font-extrabold text-slate-900">₹ {ren.estimatedPremium.toLocaleString()}</td>
                   <td className="p-4">
-                    <span className="badge badge-purple text-[10px]">{ren.remindersSent} Sent</span>
+                    <span className="badge badge-purple text-[10px]">{ren.remindersSent} Email Notices</span>
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end space-x-2">
                       <button 
-                        onClick={() => sendAutoReminder(ren.id, 'WhatsApp')}
-                        className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 font-bold hover:bg-emerald-100 flex items-center space-x-1"
-                      >
-                        <Send className="h-3.5 w-3.5" />
-                        <span>WhatsApp</span>
-                      </button>
-                      <button 
-                        onClick={() => sendAutoReminder(ren.id, 'SMS')}
-                        className="px-2.5 py-1.5 rounded-lg bg-brand-50 text-brand-700 font-bold hover:bg-brand-100 flex items-center space-x-1"
+                        onClick={() => sendEmailNotice(ren.id)}
+                        className="px-3 py-1.5 rounded-lg bg-brand-50 text-[#1E6091] font-bold hover:bg-brand-100 flex items-center space-x-1"
+                        title="Send Email Renewal Notice"
                       >
                         <Mail className="h-3.5 w-3.5" />
-                        <span>SMS / Email</span>
+                        <span>Email Notice</span>
+                      </button>
+
+                      <button 
+                        onClick={() => processRenewal(ren.id, ren.policyNumber)}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 flex items-center space-x-1 shadow"
+                        title="Process Policy Renewal"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        <span>Renew Policy</span>
                       </button>
                     </div>
                   </td>
