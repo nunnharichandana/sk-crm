@@ -5,42 +5,96 @@ import {
   Users, 
   FileCheck, 
   IndianRupee, 
-  Award, 
   TrendingUp, 
   Plus, 
-  Phone, 
   ArrowUpRight,
-  ShieldCheck,
   Calendar,
-  Building2,
-  CheckCircle2,
+  Download,
+  FileSpreadsheet,
   X,
-  FileSpreadsheet
+  Sparkles,
+  Filter
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
+const PERIOD_DATA = {
+  WEEKLY: {
+    label: 'Weekly Analysis',
+    dateRange: '19 Jul 2026 - 27 Jul 2026',
+    growthPct: '+14.2%',
+    activeLeads: '341',
+    activePolicies: '1,280',
+    premiumVolume: '₹ 42.8 L',
+    conversionRate: '38.4%',
+    chartData: [
+      { day: 'Mon', newLeads: 45, converted: 12, revenue: 185000 },
+      { day: 'Tue', newLeads: 52, converted: 18, revenue: 240000 },
+      { day: 'Wed', newLeads: 61, converted: 22, revenue: 310000 },
+      { day: 'Thu', newLeads: 48, converted: 15, revenue: 210000 },
+      { day: 'Fri', newLeads: 70, converted: 28, revenue: 420000 },
+      { day: 'Sat', newLeads: 38, converted: 14, revenue: 195000 },
+      { day: 'Sun', newLeads: 25, converted: 8, revenue: 120000 },
+    ]
+  },
+  MONTHLY: {
+    label: 'Monthly Analysis (July 2026)',
+    dateRange: '01 Jul 2026 - 27 Jul 2026',
+    growthPct: '+28.6%',
+    activeLeads: '1,420',
+    activePolicies: '4,850',
+    premiumVolume: '₹ 1.84 Cr',
+    conversionRate: '42.1%',
+    chartData: [
+      { day: 'Week 1', newLeads: 280, converted: 110, revenue: 1250000 },
+      { day: 'Week 2', newLeads: 340, converted: 145, revenue: 1680000 },
+      { day: 'Week 3', newLeads: 390, converted: 172, revenue: 1940000 },
+      { day: 'Week 4', newLeads: 410, converted: 188, revenue: 2150000 },
+    ]
+  },
+  YEARLY: {
+    label: 'Yearly Analysis (FY 2026-27)',
+    dateRange: '01 Apr 2026 - 31 Mar 2027',
+    growthPct: '+45.8%',
+    activeLeads: '15,800',
+    activePolicies: '52,400',
+    premiumVolume: '₹ 18.50 Cr',
+    conversionRate: '48.9%',
+    chartData: [
+      { day: 'Q1 2026', newLeads: 3200, converted: 1420, revenue: 14500000 },
+      { day: 'Q2 2026', newLeads: 3850, converted: 1780, revenue: 18200000 },
+      { day: 'Q3 2026 (Est)', newLeads: 4200, converted: 2010, revenue: 21000000 },
+      { day: 'Q4 2026 (Est)', newLeads: 4550, converted: 2240, revenue: 24500000 },
+    ]
+  }
+};
+
 export const Dashboard = () => {
   const { user } = useAuth();
+
+  const [selectedPeriod, setSelectedPeriod] = useState('WEEKLY');
+  const [customStartDate, setCustomStartDate] = useState('2026-07-01');
+  const [customEndDate, setCustomEndDate] = useState('2026-07-27');
   const [showAddLeadModal, setShowAddLeadModal] = useState(false);
   const [showIssuePolicyModal, setShowIssuePolicyModal] = useState(false);
+
+  const currentData = PERIOD_DATA[selectedPeriod];
+
+  const handleDownloadDashboardReport = () => {
+    alert(`Downloading complete Dashboard Analytics Report (${currentData.label} for ${currentData.dateRange}) as PDF/Excel...`);
+  };
 
   return (
     <div className="space-y-6">
       
-      {/* Dynamic Welcome Hero Banner */}
+      {/* Clean Welcome Hero Banner (No location badges or navigation lines) */}
       <div className="relative overflow-hidden rounded-3xl bg-[#1E6091] text-white p-6 sm:p-8 shadow-xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold">
-              <Building2 className="h-3.5 w-3.5" />
-              <span>{COMPANY_INFO.name} • {COMPANY_INFO.location}</span>
-            </div>
-            {/* DYNAMIC LOGGED-IN PERSON NAME GREETING */}
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
               Welcome back, {user?.name || 'Prakesh Gajendiran'}! 👋
             </h1>
             <p className="text-xs sm:text-sm text-blue-100 max-w-2xl">
-              Logged in as <strong className="text-white">{user?.roleDisplayName || 'Admin'}</strong> ({user?.email || 'admin@sksmartinvestments.com'}). Your Kanchipuram CRM portal is live with active lead & policy pipelines.
+              Logged in as <strong className="text-white">{user?.roleDisplayName || 'Admin'}</strong> ({user?.email || 'admin@sksmartinvestments.com'}). Real-time policy & revenue metrics engine.
             </p>
           </div>
 
@@ -53,17 +107,53 @@ export const Dashboard = () => {
               <span>Add New Lead</span>
             </button>
             <button 
-              onClick={() => setShowIssuePolicyModal(true)}
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-brand-700 text-white border border-brand-500/30 font-bold text-xs shadow-lg hover:bg-brand-800 transition transform hover:-translate-y-0.5 cursor-pointer"
+              onClick={handleDownloadDashboardReport}
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
             >
-              <FileCheck className="h-4 w-4" />
-              <span>Issue Policy</span>
+              <Download className="h-4 w-4" />
+              <span>Download Report</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
+      {/* Date-to-Date Filter Toolbar & Download Actions */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-4">
+        
+        {/* Working Period Selection Pills (Weekly, Monthly, Yearly) */}
+        <div className="flex items-center space-x-2">
+          <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wider mr-1">Period Filter:</span>
+          {['WEEKLY', 'MONTHLY', 'YEARLY'].map(period => (
+            <button
+              key={period}
+              onClick={() => setSelectedPeriod(period)}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+                selectedPeriod === period 
+                  ? 'bg-[#1E6091] text-white shadow-md' 
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {period}
+            </button>
+          ))}
+        </div>
+
+        {/* Date-to-Date Selector with Calendar Symbol */}
+        <div className="flex items-center space-x-3 text-xs">
+          <div className="flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700">
+            <Calendar className="h-4 w-4 text-[#1E6091]" />
+            <span className="font-bold">{currentData.dateRange}</span>
+          </div>
+
+          <span className="badge badge-green text-xs font-bold flex items-center space-x-1">
+            <ArrowUpRight className="h-3.5 w-3.5" />
+            <span>{currentData.growthPct} Growth</span>
+          </span>
+        </div>
+
+      </div>
+
+      {/* Dynamic KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition space-y-3">
@@ -75,12 +165,12 @@ export const Dashboard = () => {
           </div>
           <div>
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-black text-slate-900">341</span>
+              <span className="text-2xl font-black text-slate-900">{currentData.activeLeads}</span>
               <span className="text-xs font-bold text-emerald-600 flex items-center">
-                <ArrowUpRight className="h-3 w-3" /> +14.2%
+                <ArrowUpRight className="h-3 w-3" /> {currentData.growthPct}
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">45 leads added this week in Kanchipuram</p>
+            <p className="text-[11px] text-slate-400 mt-1">{currentData.label}</p>
           </div>
         </div>
 
@@ -93,12 +183,12 @@ export const Dashboard = () => {
           </div>
           <div>
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-black text-slate-900">1,280</span>
+              <span className="text-2xl font-black text-slate-900">{currentData.activePolicies}</span>
               <span className="text-xs font-bold text-emerald-600 flex items-center">
-                <ArrowUpRight className="h-3 w-3" /> +8.5%
+                <ArrowUpRight className="h-3 w-3" /> {currentData.growthPct}
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">₹ 1.38 Cr total active coverage</p>
+            <p className="text-[11px] text-slate-400 mt-1">Verified coverage register</p>
           </div>
         </div>
 
@@ -111,12 +201,12 @@ export const Dashboard = () => {
           </div>
           <div>
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-black text-slate-900">₹ 42.8 L</span>
+              <span className="text-2xl font-black text-slate-900">{currentData.premiumVolume}</span>
               <span className="text-xs font-bold text-emerald-600 flex items-center">
-                <ArrowUpRight className="h-3 w-3" /> +18.4%
+                <ArrowUpRight className="h-3 w-3" /> {currentData.growthPct}
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">Month-to-date collected premium</p>
+            <p className="text-[11px] text-slate-400 mt-1">Collected premium total</p>
           </div>
         </div>
 
@@ -129,30 +219,39 @@ export const Dashboard = () => {
           </div>
           <div>
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-black text-slate-900">38.4%</span>
+              <span className="text-2xl font-black text-slate-900">{currentData.conversionRate}</span>
               <span className="text-xs font-bold text-emerald-600 flex items-center">
-                <ArrowUpRight className="h-3 w-3" /> +3.1%
+                <ArrowUpRight className="h-3 w-3" /> {currentData.growthPct}
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">Top performing advisor: Priya Nair</p>
+            <p className="text-[11px] text-slate-400 mt-1">Conversion performance</p>
           </div>
         </div>
 
       </div>
 
-      {/* Clean Bar Graph Section */}
+      {/* Dynamic Bar Graph & Export Button */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-card space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900">Weekly Lead & Converted Policies Bar Analysis</h3>
-            <p className="text-xs text-slate-500">Comparative weekly bar breakdown of new customer leads vs converted policies</p>
+            <h3 className="text-base font-bold text-slate-900">{currentData.label} - Comparative Breakdown</h3>
+            <p className="text-xs text-slate-500">Date Range: <strong>{currentData.dateRange}</strong> • Date-to-Date Growth: <strong>{currentData.growthPct}</strong></p>
           </div>
-          <span className="badge badge-blue text-xs">Standard Bar Chart</span>
+
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={handleDownloadDashboardReport}
+              className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-sm hover:bg-slate-50 transition cursor-pointer"
+            >
+              <Download className="h-4 w-4 text-[#1E6091]" />
+              <span>Download Bar Graph Report</span>
+            </button>
+          </div>
         </div>
 
         <div className="h-72 w-full pt-2">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={DASHBOARD_ANALYTICS.weeklyLeads} barGap={6}>
+            <BarChart data={currentData.chartData} barGap={6}>
               <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
               <XAxis dataKey="day" stroke="#64748B" fontSize={11} tickLine={false} />
               <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
@@ -213,52 +312,6 @@ export const Dashboard = () => {
               <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
                 <button type="button" onClick={() => setShowAddLeadModal(false)} className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 font-bold">Cancel</button>
                 <button type="submit" className="px-5 py-2 rounded-xl bg-[#1E6091] text-white font-bold shadow">Save Lead</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Issue Policy Modal */}
-      {showIssuePolicyModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in duration-150">
-            <div className="px-6 py-4 bg-[#1E6091] text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm">Issue New Policy Certificate</h3>
-              <button onClick={() => setShowIssuePolicyModal(false)} className="text-white/80 hover:text-white">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              alert("Policy issued successfully!");
-              setShowIssuePolicyModal(false);
-            }} className="p-6 space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Customer Full Name</label>
-                <input type="text" required placeholder="e.g. Neha Agarwal" className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Insurance Provider</label>
-                  <select className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none">
-                    <option value="Star Health">Star Health Insurance</option>
-                    <option value="HDFC ERGO">HDFC ERGO</option>
-                    <option value="Tata AIG">Tata AIG General</option>
-                    <option value="ICICI Prudential">ICICI Prudential</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Gross Premium (₹)</label>
-                  <input type="number" required placeholder="42000" className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
-                <button type="button" onClick={() => setShowIssuePolicyModal(false)} className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 font-bold">Cancel</button>
-                <button type="submit" className="px-5 py-2 rounded-xl bg-[#1E6091] text-white font-bold shadow">Confirm Issue Policy</button>
               </div>
             </form>
           </div>
