@@ -8,6 +8,7 @@ import { Leads } from '../pages/Leads';
 import { Followups } from '../pages/Followups';
 import { Customers } from '../pages/Customers';
 import { Policies } from '../pages/Policies';
+import { Investments } from '../pages/Investments';
 import { Claims } from '../pages/Claims';
 import { Renewals } from '../pages/Renewals';
 import { Staff } from '../pages/Staff';
@@ -34,6 +35,7 @@ export const AppRoutes = () => {
       <Route path="/followups" element={<ProtectedRoute><Followups /></ProtectedRoute>} />
       <Route path="/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
       <Route path="/policies" element={<ProtectedRoute><Policies /></ProtectedRoute>} />
+      <Route path="/investments" element={<ProtectedRoute><Investments /></ProtectedRoute>} />
       <Route path="/claims" element={<ProtectedRoute><Claims /></ProtectedRoute>} />
       <Route path="/renewals" element={<ProtectedRoute><Renewals /></ProtectedRoute>} />
       <Route path="/staff" element={<ProtectedRoute><Staff /></ProtectedRoute>} />

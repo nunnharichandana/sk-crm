@@ -1,29 +1,43 @@
 package com.sksmartinsurance.controller;
 
-import com.sksmartinsurance.entity.Customer;
-import com.sksmartinsurance.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.sksmartinsurance.service.FirestoreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/customers")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/customers")
 public class CustomerController {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final FirestoreService firestoreService;
+
+    public CustomerController(FirestoreService firestoreService) {
+        this.firestoreService = firestoreService;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomers() {
-        return ResponseEntity.ok(customerRepository.findAll());
+    public ResponseEntity<?> getAllCustomers() {
+        List<Map<String, Object>> customers = firestoreService.getAllDocuments("customers");
+        return ResponseEntity.ok(customers);
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        Customer saved = customerRepository.save(customer);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<?> createCustomer(@RequestBody Map<String, Object> customerData) {
+        String id = "CUST-" + System.currentTimeMillis();
+        customerData.put("id", id);
+        customerData.put("customerCode", id);
+        customerData.put("createdAt", Instant.now().toString());
+        firestoreService.saveDocument("customers", id, customerData);
+        return ResponseEntity.ok(customerData);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCustomer(@PathVariable String id) {
+        Map<String, Object> customer = firestoreService.getDocument("customers", id);
+        if (customer == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(customer);
     }
 }
