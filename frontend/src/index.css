@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-blue: #0A4DA2;
+    --secondary-blue: #1976D2;
+    --light-blue: #EAF4FF;
+    --white: #FFFFFF;
+    --bg-main: #F8FAFC;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Badge Base Styles */
+.badge {
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-colors;
+}
+.badge-blue {
+  @apply bg-brand-50 text-brand-600 border border-brand-200;
+}
+.badge-green {
+  @apply bg-emerald-50 text-emerald-700 border border-emerald-200;
+}
+.badge-amber {
+  @apply bg-amber-50 text-amber-700 border border-amber-200;
+}
+.badge-purple {
+  @apply bg-purple-50 text-purple-700 border border-purple-200;
+}
+.badge-red {
+  @apply bg-rose-50 text-rose-700 border border-rose-200;
+}
+
+/* Glassmorphism Card Utility */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}

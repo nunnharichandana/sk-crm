@@ -1,0 +1,21 @@
+# Node / React
+node_modules/
+dist/
+build/
+.env
+.env.local
+*.log
+
+# Java / Maven
+target/
+*.class
+.mvn/
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

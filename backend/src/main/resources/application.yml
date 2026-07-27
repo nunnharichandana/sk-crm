@@ -1,0 +1,36 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: sk-smart-insurance-crm
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/sk_smart_insurance_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
+
+jwt:
+  secret: 9A2F8E7C4B1D6E3F8A0B2C4D6E8F1A3B5C7D9E1F3A5B7C9D1E3F5A7B9C1D3E5F
+  expiration-ms: 86400000 # 24 hours
+
+logging:
+  level:
+    root: INFO
+    com.sksmartinsurance: DEBUG
