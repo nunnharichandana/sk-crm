@@ -1,16 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { MOCK_ROLES, MOCK_LEADS, MOCK_POLICIES, MOCK_CLAIMS, COMPANY_INFO } from '../../services/mockDataService';
+import { MOCK_ROLES, MOCK_LEADS, MOCK_POLICIES, MOCK_CLAIMS } from '../../services/mockDataService';
 import { Logo } from '../common/Logo';
 import { 
   Search, 
-  Bell, 
   MapPin, 
   ChevronDown, 
   UserCheck, 
   LogOut, 
-  ShieldAlert,
-  FileText,
   User,
   ExternalLink
 } from 'lucide-react';
@@ -74,17 +71,9 @@ export const Header = () => {
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
-        {/* Left: Brand Identity Logo */}
+        {/* Left: Brand Identity Logo (Single clean display) */}
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
           <Logo className="h-10 w-auto" />
-          <div className="hidden sm:block">
-            <h1 className="text-sm font-black text-slate-900 tracking-tight leading-tight uppercase">
-              {COMPANY_INFO.name}
-            </h1>
-            <p className="text-[10px] font-bold text-[#1E6091] tracking-wider uppercase">
-              {COMPANY_INFO.tagline}
-            </p>
-          </div>
         </div>
 
         {/* Center: Live Interactive Global Search Bar */}
@@ -141,7 +130,7 @@ export const Header = () => {
         {/* Right Actions: Single Location Badge, Role Switcher & User Profile */}
         <div className="flex items-center space-x-3">
           
-          {/* Location Badge (Kanchipuram, Tamil Nadu) */}
+          {/* Location Badge (Kanchipuram Office) */}
           <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold">
             <MapPin className="h-3.5 w-3.5 text-[#1E6091]" />
             <span>Kanchipuram Office</span>
