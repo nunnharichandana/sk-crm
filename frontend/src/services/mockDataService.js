@@ -270,52 +270,99 @@ export const MOCK_CLAIMS = [
   }
 ];
 
+// MOCK STAFF WITH FULL LOGIN CREDENTIALS STORE (MD Accessible)
 export const MOCK_STAFF = [
   {
     id: 1,
     employeeId: 'EMP001',
     name: 'Prakash Gajendran',
     role: 'Managing Director (MD)',
+    roleCode: 'ADMIN',
     branch: 'Kanchipuram Office',
     email: 'prakash.md@sksmartinvestments.com',
+    password: 'Password@123',
+    phone: '+91 98423 11223',
     target: 2500000,
     achieved: 2350000,
     commissionEarned: 188000,
     activeLeads: 45,
-    rating: 5.0
+    rating: 5.0,
+    status: 'ACTIVE'
+  },
+  {
+    id: 2,
+    employeeId: 'EMP002',
+    name: 'Ramesh K. (Manager)',
+    role: 'Manager',
+    roleCode: 'MANAGER',
+    branch: 'Kanchipuram Office',
+    email: 'manager.kanchipuram@sksmartinvestments.com',
+    password: 'Manager@123',
+    phone: '+91 98423 22334',
+    target: 1500000,
+    achieved: 1320000,
+    commissionEarned: 105600,
+    activeLeads: 32,
+    rating: 4.8,
+    status: 'ACTIVE'
+  },
+  {
+    id: 3,
+    employeeId: 'EMP003',
+    name: 'Rohan Mehta',
+    role: 'Team Leader',
+    roleCode: 'TEAM_LEADER',
+    branch: 'Kanchipuram Office',
+    email: 'tl.health@sksmartinvestments.com',
+    password: 'Leader@123',
+    phone: '+91 98423 33445',
+    target: 1000000,
+    achieved: 895000,
+    commissionEarned: 71600,
+    activeLeads: 28,
+    rating: 4.8,
+    status: 'ACTIVE'
   },
   {
     id: 4,
     employeeId: 'EMP004',
     name: 'Priya Nair',
     role: 'Staff Advisor',
+    roleCode: 'STAFF',
     branch: 'Kanchipuram Office',
     email: 'priya.advisor@sksmartinvestments.com',
+    password: 'Advisor@123',
+    phone: '+91 98423 44556',
     target: 500000,
     achieved: 485000,
     commissionEarned: 38800,
     activeLeads: 24,
-    rating: 4.9
+    rating: 4.9,
+    status: 'ACTIVE'
   },
   {
     id: 5,
     employeeId: 'EMP005',
     name: 'Amit Verma',
     role: 'Staff Advisor',
+    roleCode: 'STAFF',
     branch: 'Kanchipuram Office',
     email: 'amit.advisor@sksmartinvestments.com',
+    password: 'Advisor@123',
+    phone: '+91 98423 55667',
     target: 500000,
     achieved: 390000,
     commissionEarned: 31200,
     activeLeads: 19,
-    rating: 4.7
+    rating: 4.7,
+    status: 'ACTIVE'
   }
 ];
 
 export const MOCK_AUDIT_LOGS = [
   { id: 1, user: 'Prakash Gajendran (MD)', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'MD Prakash Gajendran logged into CRM' },
   { id: 2, user: 'Priya Nair', action: 'ISSUE_POLICY', module: 'Policy Module', timestamp: '2026-07-27 09:30:22', ip: '192.168.1.105', details: 'Issued policy POL-HDFC-2026-78901' },
-  { id: 3, user: 'Prakash Gajendran (MD)', action: 'TRANSFER_LEAD', module: 'Lead Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'Re-assigned lead LD-2026-003 to Amit Verma' },
+  { id: 3, user: 'Prakash Gajendran (MD)', action: 'PROVISION_STAFF', module: 'Staff Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'MD provisioned login credentials for Amit Verma' },
 ];
 
 export const DASHBOARD_ANALYTICS = {
