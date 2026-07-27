@@ -8,11 +8,11 @@ export const COMPANY_INFO = {
   name: 'SK SMART INVESTMENTS',
   tagline: 'INSURANCE AND INVESTMENTS SPECIALIST',
   mdName: 'Prakash Gajendran',
-  title: 'Managing Director',
+  title: 'Managing Director (MD)',
   location: 'Kanchipuram, Tamil Nadu',
   address: 'No. 14, Gandhi Road, Near Kamakshi Amman Temple, Kanchipuram, Tamil Nadu - 631501',
   phone: '+91 98423 11223',
-  email: 'contact@sksmartinvestments.com',
+  email: 'prakash.md@sksmartinvestments.com',
   irdaLicense: 'IRDAI / KNM / 2021 / 9042'
 };
 
@@ -21,18 +21,53 @@ export const INITIAL_USER = {
   employeeId: 'EMP001',
   name: 'Prakash Gajendran',
   email: 'prakash.md@sksmartinvestments.com',
-  role: 'ADMIN', // ADMIN, MANAGER, TEAM_LEADER, STAFF
-  roleDisplayName: 'Admin / MD',
+  role: 'ADMIN', // ADMIN (Managing Director), MANAGER, TEAM_LEADER, STAFF
+  roleDisplayName: 'Managing Director (MD)',
   branch: 'Kanchipuram Office',
   avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150',
   permissions: ['ALL']
 };
 
 export const MOCK_ROLES = [
-  { id: 'ADMIN', name: 'Admin', desc: 'System Configuration & Full Access' },
+  { id: 'ADMIN', name: 'Managing Director (MD)', desc: 'Full System Control & Master Configurations' },
   { id: 'MANAGER', name: 'Manager', desc: 'Kanchipuram Operations & Client Allocation' },
   { id: 'TEAM_LEADER', name: 'Team Leader', desc: 'Team Oversight & Policy Review' },
   { id: 'STAFF', name: 'Staff Advisor', desc: 'Client Lead Management & Policy Issuance' },
+];
+
+export const INITIAL_COMPANIES = [
+  { 
+    id: 1, 
+    code: 'STAR_HEALTH', 
+    name: 'Star Health and Allied Insurance', 
+    supportEmail: 'support@starhealth.in', 
+    tollFree: '1800-425-2255',
+    products: ['Comprehensive Optima Health', 'Star Family Health Optima', 'Senior Citizens Red Carpet']
+  },
+  { 
+    id: 2, 
+    code: 'HDFC_ERGO', 
+    name: 'HDFC ERGO General Insurance', 
+    supportEmail: 'care@hdfcergo.com', 
+    tollFree: '1800-266-6444',
+    products: ['My:Optima Secure Health Plan', 'Motor Comprehensive Private Car', 'Home Protect Plan']
+  },
+  { 
+    id: 3, 
+    code: 'TATA_AIG', 
+    name: 'Tata AIG General Insurance', 
+    supportEmail: 'customersupport@tataaig.com', 
+    tollFree: '1800-266-7780',
+    products: ['Auto Secure Private Car Package', 'MediCare Premier Health', 'Travel Guard Shield']
+  },
+  { 
+    id: 4, 
+    code: 'ICICI_PRUDENTIAL', 
+    name: 'ICICI Prudential Life Insurance', 
+    supportEmail: 'support@icicipru.com', 
+    tollFree: '1800-222-666',
+    products: ['iProtect Smart Term Plan', 'GIFT Pro Investment Plan', 'Future Perfect Savings']
+  }
 ];
 
 export const MOCK_LEADS = [
@@ -240,7 +275,7 @@ export const MOCK_STAFF = [
     id: 1,
     employeeId: 'EMP001',
     name: 'Prakash Gajendran',
-    role: 'Managing Director',
+    role: 'Managing Director (MD)',
     branch: 'Kanchipuram Office',
     email: 'prakash.md@sksmartinvestments.com',
     target: 2500000,
@@ -278,9 +313,9 @@ export const MOCK_STAFF = [
 ];
 
 export const MOCK_AUDIT_LOGS = [
-  { id: 1, user: 'Prakash Gajendran', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'MD Prakash Gajendran logged into CRM' },
+  { id: 1, user: 'Prakash Gajendran (MD)', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'MD Prakash Gajendran logged into CRM' },
   { id: 2, user: 'Priya Nair', action: 'ISSUE_POLICY', module: 'Policy Module', timestamp: '2026-07-27 09:30:22', ip: '192.168.1.105', details: 'Issued policy POL-HDFC-2026-78901' },
-  { id: 3, user: 'Prakash Gajendran', action: 'TRANSFER_LEAD', module: 'Lead Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'Re-assigned lead LD-2026-003 to Amit Verma' },
+  { id: 3, user: 'Prakash Gajendran (MD)', action: 'TRANSFER_LEAD', module: 'Lead Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'Re-assigned lead LD-2026-003 to Amit Verma' },
 ];
 
 export const DASHBOARD_ANALYTICS = {
