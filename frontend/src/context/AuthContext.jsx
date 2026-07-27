@@ -36,30 +36,54 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const loginWithFirebase = async (email, password) => {
-    // Simulated Firebase Auth ID Token generation for seamless dev/prod execution
+  // Helper: Format human-readable name from email string (e.g., "ramesh.kumar@gmail.com" -> "Ramesh Kumar")
+  const formatNameFromEmail = (emailStr) => {
+    if (!emailStr || !emailStr.includes('@')) return 'User';
+    const prefix = emailStr.split('@')[0];
+    return prefix
+      .replace(/[._-]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  };
+
+  const loginWithFirebase = async (emailInput, password) => {
+    const cleanEmail = emailInput.trim().toLowerCase();
     const mockUid = "usr_" + Math.random().toString(36).substring(2, 9);
-    const mockToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImZpcmViYXNlIn0." + btoa(JSON.stringify({ uid: mockUid, email })) + ".mockSignature";
+    const mockToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImZpcmViYXNlIn0." + btoa(JSON.stringify({ uid: mockUid, email: cleanEmail })) + ".mockSignature";
 
     localStorage.setItem('firebaseIdToken', mockToken);
     setIdToken(mockToken);
 
-    // Match exact staff account
-    const matchedStaff = MOCK_STAFF.find(s => s.email.toLowerCase() === email.trim().toLowerCase());
+    // Match exact staff account in MOCK_STAFF by email or employee ID
+    const matchedStaff = MOCK_STAFF.find(
+      s => s.email.toLowerCase() === cleanEmail || s.employeeId.toLowerCase() === cleanEmail
+    );
+
+    const displayName = matchedStaff 
+      ? matchedStaff.name 
+      : formatNameFromEmail(cleanEmail);
+
+    const roleCode = matchedStaff 
+      ? matchedStaff.roleCode 
+      : (cleanEmail.includes('admin') ? 'SUPER_ADMIN' : cleanEmail.includes('manager') ? 'MANAGER' : 'EMPLOYEE');
+
+    const roleDisplayName = matchedStaff 
+      ? matchedStaff.role 
+      : (roleCode === 'SUPER_ADMIN' ? 'Super Admin' : roleCode === 'MANAGER' ? 'Manager' : 'Employee Advisor');
 
     const activeUser = {
-      id: matchedStaff ? matchedStaff.id : 'STF-001',
-      employeeId: matchedStaff ? matchedStaff.employeeId : 'EMP-ADM-001',
-      name: matchedStaff ? matchedStaff.name : 'Prakesh Gajendiran',
-      email: email,
-      role: matchedStaff ? matchedStaff.roleCode : 'SUPER_ADMIN',
-      roleDisplayName: matchedStaff ? matchedStaff.role : 'Super Admin',
+      id: matchedStaff ? matchedStaff.id : 'STF-' + Math.floor(100 + Math.random() * 900),
+      employeeId: matchedStaff ? matchedStaff.employeeId : 'EMP-' + Math.floor(100 + Math.random() * 900),
+      name: displayName,
+      email: cleanEmail,
+      role: roleCode,
+      roleDisplayName: roleDisplayName,
       branch: matchedStaff ? matchedStaff.branch : 'Kanchipuram HQ',
       avatar: matchedStaff?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150',
       permissions: ['ALL']
     };
 
     setUser(activeUser);
+    localStorage.setItem('crm_active_user', JSON.stringify(activeUser));
 
     // Trigger backend registration & first-login workspace initialization
     try {
@@ -72,9 +96,10 @@ export const AuthProvider = ({ children }) => {
     return activeUser;
   };
 
-  const registerWithFirebase = async (name, email, password) => {
+  const registerWithFirebase = async (name, emailInput, password) => {
+    const cleanEmail = emailInput.trim().toLowerCase();
     const mockUid = "usr_" + Math.random().toString(36).substring(2, 9);
-    const mockToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImZpcmViYXNlIn0." + btoa(JSON.stringify({ uid: mockUid, email })) + ".mockSignature";
+    const mockToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImZpcmViYXNlIn0." + btoa(JSON.stringify({ uid: mockUid, email: cleanEmail })) + ".mockSignature";
 
     localStorage.setItem('firebaseIdToken', mockToken);
     setIdToken(mockToken);
@@ -82,8 +107,8 @@ export const AuthProvider = ({ children }) => {
     const newUser = {
       id: 'STF-' + Math.floor(100 + Math.random() * 900),
       employeeId: 'EMP-NEW-' + Math.floor(100 + Math.random() * 900),
-      name: name,
-      email: email,
+      name: name.trim() || formatNameFromEmail(cleanEmail),
+      email: cleanEmail,
       role: 'USER', // Initial role assigned as USER
       roleDisplayName: 'User',
       branch: 'Kanchipuram HQ',
@@ -92,9 +117,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     setUser(newUser);
+    localStorage.setItem('crm_active_user', JSON.stringify(newUser));
 
     try {
-      await registerUserBackend(mockUid, name, email);
+      await registerUserBackend(mockUid, newUser.name, cleanEmail);
     } catch (e) {
       // Graceful fallback
     }
@@ -104,12 +130,17 @@ export const AuthProvider = ({ children }) => {
 
   const switchRole = (roleCode) => {
     const matchedRole = MOCK_ROLES.find(r => r.id === roleCode);
+    const matchedStaff = MOCK_STAFF.find(s => s.roleCode === roleCode);
+    
     const updatedUser = {
       ...user,
       role: roleCode,
-      roleDisplayName: matchedRole ? matchedRole.name : roleCode
+      roleDisplayName: matchedRole ? matchedRole.name : roleCode,
+      name: matchedStaff ? matchedStaff.name : (matchedRole?.defaultName || user.name),
+      email: matchedStaff ? matchedStaff.email : (matchedRole?.email || user.email)
     };
     setUser(updatedUser);
+    localStorage.setItem('crm_active_user', JSON.stringify(updatedUser));
   };
 
   const logout = () => {
