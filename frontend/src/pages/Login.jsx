@@ -1,177 +1,122 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { COMPANY_INFO, MOCK_ROLES } from '../services/mockDataService';
 import { Logo } from '../components/common/Logo';
-import { Lock, Mail, ArrowRight, CheckCircle2, MapPin, Building2 } from 'lucide-react';
+import { ShieldCheck, UserCheck, Lock, Mail, ArrowRight, MapPin } from 'lucide-react';
 
 export const Login = () => {
-  const { login, switchRole } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('prakash.md@sksmartinvestments.com');
-  const [password, setPassword] = useState('Password@123');
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState('admin@sksmartinvestments.com');
+  const [password, setPassword] = useState('Password@123');
+  const [selectedRole, setSelectedRole] = useState('ADMIN');
+
+  const handleLoginSubmit = (e) => {
     e.preventDefault();
-    login(email, password);
+    login(selectedRole);
     navigate('/dashboard');
   };
 
-  const handleQuickLogin = (roleId, demoEmail) => {
-    switchRole(roleId);
-    setEmail(demoEmail);
-    login(demoEmail, 'Password@123');
-    navigate('/dashboard');
+  const handleQuickRoleSelect = (roleId) => {
+    setSelectedRole(roleId);
+    const matchedRole = MOCK_ROLES.find(r => r.id === roleId);
+    if (matchedRole) {
+      setEmail(matchedRole.email);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
       
-      {/* Background Graphic elements */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-brand-600/30 rounded-full blur-3xl" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl" />
+      {/* Dynamic Mild Blue Background Aura */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#1E6091]/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-premium border border-slate-200 grid grid-cols-1 md:grid-cols-2 overflow-hidden z-10">
+      <div className="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 space-y-6 relative z-10 animate-in fade-in duration-300">
         
-        {/* Left Info Panel */}
-        <div className="bg-[#1E6091] p-8 text-white flex flex-col justify-between relative overflow-hidden">
-          <div className="space-y-6">
-            
-            {/* Official Logo Banner */}
-            <div className="bg-white p-4 rounded-2xl shadow-md border border-slate-100 max-w-xs">
-              <Logo size="md" variant="full" />
-            </div>
-
-            <div className="pt-2 space-y-3">
-              <h2 className="text-xl font-extrabold tracking-tight leading-snug">
-                SK SMART INVESTMENTS
-              </h2>
-              <span className="badge bg-amber-400 text-slate-900 font-extrabold text-[10px]">
-                INSURANCE AND INVESTMENTS SPECIALIST
-              </span>
-              <p className="text-xs text-brand-100/90 leading-relaxed pt-1">
-                Enterprise CRM Portal for Managing Director <strong>Prakash Gajendran</strong> and team in Kanchipuram.
-              </p>
-            </div>
-
-            <div className="space-y-2 pt-1 text-xs text-brand-50">
-              <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-amber-300" />
-                <span>Kanchipuram, Tamil Nadu - Office Headquarters</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Building2 className="h-4 w-4 text-brand-200" />
-                <span>Managing Director: Prakash Gajendran</span>
-              </div>
-            </div>
-
-            <div className="space-y-1.5 pt-2 border-t border-white/15 text-xs">
-              {[
-                'JWT Secured Role-Based Portal',
-                'Standard Linear Analytics Graphs',
-                'Automated Policy & WhatsApp Reminders',
-                'Audit Logging & IRDA Compliance'
-              ].map((feat, i) => (
-                <div key={i} className="flex items-center space-x-2 text-brand-50">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
-                  <span>{feat}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="pt-6 text-[11px] text-brand-200 border-t border-white/10">
-            © 2026 SK SMART INVESTMENTS. All rights reserved.
+        {/* Brand Header */}
+        <div className="text-center space-y-2">
+          <Logo className="h-12 w-auto mx-auto" />
+          <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase mt-2">
+            {COMPANY_INFO.name}
+          </h2>
+          <p className="text-xs font-bold text-[#1E6091] uppercase tracking-wider">
+            {COMPANY_INFO.tagline}
+          </p>
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-700">
+            <MapPin className="h-3 w-3 text-[#1E6091]" />
+            <span>{COMPANY_INFO.location}</span>
           </div>
         </div>
 
-        {/* Right Form Panel */}
-        <div className="p-8 flex flex-col justify-between bg-white">
-          <div>
-            <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-900">Sign in to CRM</h3>
-              <p className="text-xs text-slate-500 mt-1">Select account role or enter employee credentials</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Official Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <input 
-                    type="email" 
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 focus:border-brand-600 outline-none transition"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <input 
-                    type="password" 
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 focus:border-brand-600 outline-none transition"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between text-xs">
-                <label className="flex items-center space-x-2 text-slate-600">
-                  <input type="checkbox" defaultChecked className="rounded text-brand-600 border-slate-300 focus:ring-brand-500" />
-                  <span>Remember session</span>
-                </label>
-                <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Password reset link sent to official email!"); }} className="text-brand-600 font-bold hover:underline">Forgot password?</a>
-              </div>
-
-              <button 
-                type="submit"
-                className="w-full py-3 bg-[#1E6091] hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center space-x-2"
+        {/* Quick Role Switch Buttons */}
+        <div className="space-y-2">
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Select Account Portal Role</label>
+          <div className="grid grid-cols-2 gap-2">
+            {MOCK_ROLES.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => handleQuickRoleSelect(r.id)}
+                className={`p-2.5 rounded-xl border text-xs text-left transition ${
+                  selectedRole === r.id 
+                    ? 'border-[#1E6091] bg-brand-50 text-[#1E6091] font-extrabold shadow-xs' 
+                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 font-semibold'
+                }`}
               >
-                <span>Log In to Dashboard</span>
-                <ArrowRight className="h-4 w-4" />
+                <span className="block font-bold truncate">{r.name}</span>
+                <span className="text-[10px] text-slate-400 block truncate">{r.defaultName}</span>
               </button>
-            </form>
+            ))}
+          </div>
+        </div>
 
-            {/* Restricted 4 Role Quick Launch Buttons */}
-            <div className="mt-6 pt-4 border-t border-slate-100">
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Login as:</p>
-              <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <button 
-                  onClick={() => handleQuickLogin('ADMIN', 'prakash.md@sksmartinvestments.com')}
-                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
-                >
-                  ⚙️ Admin (MD)
-                </button>
-                <button 
-                  onClick={() => handleQuickLogin('MANAGER', 'manager.kanchipuram@sksmartinvestments.com')}
-                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
-                >
-                  🏢 Manager
-                </button>
-                <button 
-                  onClick={() => handleQuickLogin('TEAM_LEADER', 'tl.health@sksmartinvestments.com')}
-                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
-                >
-                  👥 Team Leader
-                </button>
-                <button 
-                  onClick={() => handleQuickLogin('STAFF', 'priya.advisor@sksmartinvestments.com')}
-                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
-                >
-                  👤 Staff Advisor
-                </button>
-              </div>
+        {/* Login Form */}
+        <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Official Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input 
+                type="email" 
+                required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none font-medium"
+              />
             </div>
           </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input 
+                type="password" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none font-medium"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-2xl bg-[#1E6091] hover:bg-brand-700 text-white font-extrabold text-xs shadow-lg transition flex items-center justify-center space-x-2"
+          >
+            <span>Sign In to CRM Portal</span>
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </form>
+
+        <div className="pt-2 text-center text-[10px] text-slate-400 border-t border-slate-100">
+          Official System • Kanchipuram Office • IRDA License: {COMPANY_INFO.irdaLicense}
         </div>
 
       </div>
+
     </div>
   );
 };

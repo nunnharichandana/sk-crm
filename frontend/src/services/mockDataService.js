@@ -1,18 +1,17 @@
 // SK SMART INVESTMENTS - Central Mock Data Store
 // Company Name: SK SMART INVESTMENTS
 // Tagline: INSURANCE AND INVESTMENTS SPECIALIST
-// Managing Director: Prakash Gajendran
-// Location: Kanchipuram, Tamil Nadu
+// Primary Location: Kanchipuram, Tamil Nadu
 
 export const COMPANY_INFO = {
   name: 'SK SMART INVESTMENTS',
   tagline: 'INSURANCE AND INVESTMENTS SPECIALIST',
   mdName: 'Prakash Gajendran',
-  title: 'Managing Director (MD)',
+  title: 'Admin',
   location: 'Kanchipuram, Tamil Nadu',
   address: 'No. 14, Gandhi Road, Near Kamakshi Amman Temple, Kanchipuram, Tamil Nadu - 631501',
   phone: '+91 98423 11223',
-  email: 'prakash.md@sksmartinvestments.com',
+  email: 'admin@sksmartinvestments.com',
   irdaLicense: 'IRDAI / KNM / 2021 / 9042'
 };
 
@@ -20,19 +19,19 @@ export const INITIAL_USER = {
   id: 1,
   employeeId: 'EMP001',
   name: 'Prakash Gajendran',
-  email: 'prakash.md@sksmartinvestments.com',
-  role: 'ADMIN', // ADMIN (Managing Director), MANAGER, TEAM_LEADER, STAFF
-  roleDisplayName: 'Managing Director (MD)',
+  email: 'admin@sksmartinvestments.com',
+  role: 'ADMIN', // ADMIN, MANAGER, TEAM_LEADER, STAFF
+  roleDisplayName: 'Admin',
   branch: 'Kanchipuram Office',
   avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150',
   permissions: ['ALL']
 };
 
 export const MOCK_ROLES = [
-  { id: 'ADMIN', name: 'Managing Director (MD)', desc: 'Full System Control & Master Configurations' },
-  { id: 'MANAGER', name: 'Manager', desc: 'Kanchipuram Operations & Client Allocation' },
-  { id: 'TEAM_LEADER', name: 'Team Leader', desc: 'Team Oversight & Policy Review' },
-  { id: 'STAFF', name: 'Staff Advisor', desc: 'Client Lead Management & Policy Issuance' },
+  { id: 'ADMIN', name: 'Admin', desc: 'System Configuration & Full Access', defaultName: 'Prakash Gajendran', email: 'admin@sksmartinvestments.com' },
+  { id: 'MANAGER', name: 'Manager', desc: 'Kanchipuram Operations & Client Allocation', defaultName: 'Ramesh K.', email: 'manager.kanchipuram@sksmartinvestments.com' },
+  { id: 'TEAM_LEADER', name: 'Team Leader', desc: 'Team Oversight & Policy Review', defaultName: 'Rohan Mehta', email: 'tl.health@sksmartinvestments.com' },
+  { id: 'STAFF', name: 'Staff Advisor', desc: 'Client Lead Management & Policy Issuance', defaultName: 'Priya Nair', email: 'priya.advisor@sksmartinvestments.com' },
 ];
 
 export const INITIAL_COMPANIES = [
@@ -270,16 +269,16 @@ export const MOCK_CLAIMS = [
   }
 ];
 
-// MOCK STAFF WITH FULL LOGIN CREDENTIALS STORE (MD Accessible)
+// MOCK STAFF WITH FULL LOGIN CREDENTIALS STORE
 export const MOCK_STAFF = [
   {
     id: 1,
     employeeId: 'EMP001',
     name: 'Prakash Gajendran',
-    role: 'Managing Director (MD)',
+    role: 'Admin',
     roleCode: 'ADMIN',
     branch: 'Kanchipuram Office',
-    email: 'prakash.md@sksmartinvestments.com',
+    email: 'admin@sksmartinvestments.com',
     password: 'Password@123',
     phone: '+91 98423 11223',
     target: 2500000,
@@ -292,7 +291,7 @@ export const MOCK_STAFF = [
   {
     id: 2,
     employeeId: 'EMP002',
-    name: 'Ramesh K. (Manager)',
+    name: 'Ramesh K.',
     role: 'Manager',
     roleCode: 'MANAGER',
     branch: 'Kanchipuram Office',
@@ -360,9 +359,9 @@ export const MOCK_STAFF = [
 ];
 
 export const MOCK_AUDIT_LOGS = [
-  { id: 1, user: 'Prakash Gajendran (MD)', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'MD Prakash Gajendran logged into CRM' },
+  { id: 1, user: 'Prakash Gajendran (Admin)', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'Admin Prakash Gajendran logged into CRM' },
   { id: 2, user: 'Priya Nair', action: 'ISSUE_POLICY', module: 'Policy Module', timestamp: '2026-07-27 09:30:22', ip: '192.168.1.105', details: 'Issued policy POL-HDFC-2026-78901' },
-  { id: 3, user: 'Prakash Gajendran (MD)', action: 'PROVISION_STAFF', module: 'Staff Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'MD provisioned login credentials for Amit Verma' },
+  { id: 3, user: 'Prakash Gajendran (Admin)', action: 'PROVISION_STAFF', module: 'Staff Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'Admin provisioned login credentials for Amit Verma' },
 ];
 
 export const DASHBOARD_ANALYTICS = {
