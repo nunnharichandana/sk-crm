@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { MOCK_ROLES, MOCK_LEADS, MOCK_POLICIES, MOCK_CLAIMS } from '../../services/mockDataService';
+import { MOCK_ROLES, MOCK_LEADS, MOCK_POLICIES, MOCK_CLAIMS, MOCK_STAFF } from '../../services/mockDataService';
 import { Logo } from '../common/Logo';
 import { 
   Search, 
@@ -9,7 +9,8 @@ import {
   UserCheck, 
   LogOut, 
   User,
-  ExternalLink
+  ExternalLink,
+  X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,7 +28,7 @@ export const Header = () => {
   const roleRef = useRef(null);
   const profileRef = useRef(null);
 
-  // Live Search Logic across Leads, Policies, and Claims
+  // Live Multi-Entity Search Logic (Leads, Policies, Claims, Staff)
   useEffect(() => {
     if (!searchTerm.trim()) {
       setSearchResults([]);
@@ -35,28 +36,78 @@ export const Header = () => {
       return;
     }
 
-    const term = searchTerm.toLowerCase();
+    const term = searchTerm.toLowerCase().trim();
 
     const matchingLeads = MOCK_LEADS.filter(l => 
       l.customerName.toLowerCase().includes(term) || 
       l.id.toLowerCase().includes(term) ||
-      l.mobileNumber.includes(term)
-    ).map(l => ({ type: 'LEAD', title: `${l.id} - ${l.customerName}`, sub: `Lead • ${l.insuranceType}`, link: '/leads' }));
+      l.mobileNumber.includes(term) ||
+      l.email.toLowerCase().includes(term) ||
+      l.insuranceType.toLowerCase().includes(term)
+    ).map(l => ({ 
+      id: l.id,
+      type: 'LEAD', 
+      title: `${l.id} - ${l.customerName}`, 
+      sub: `Lead • ${l.insuranceType} (${l.mobileNumber})`, 
+      link: '/leads' 
+    }));
 
     const matchingPolicies = MOCK_POLICIES.filter(p => 
       p.customerName.toLowerCase().includes(term) || 
-      p.id.toLowerCase().includes(term)
-    ).map(p => ({ type: 'POLICY', title: `${p.id} - ${p.customerName}`, sub: `Policy • ${p.insuranceCompany}`, link: '/policies' }));
+      p.id.toLowerCase().includes(term) ||
+      p.insuranceCompany.toLowerCase().includes(term)
+    ).map(p => ({ 
+      id: p.id,
+      type: 'POLICY', 
+      title: `${p.id} - ${p.customerName}`, 
+      sub: `Policy • ${p.insuranceCompany} (₹${p.grossPremium.toLocaleString()})`, 
+      link: '/policies' 
+    }));
 
     const matchingClaims = MOCK_CLAIMS.filter(c => 
       c.customerName.toLowerCase().includes(term) || 
-      c.id.toLowerCase().includes(term)
-    ).map(c => ({ type: 'CLAIM', title: `${c.id} - ${c.customerName}`, sub: `Claim • ${c.hospitalName}`, link: '/claims' }));
+      c.id.toLowerCase().includes(term) ||
+      c.policyNumber.toLowerCase().includes(term) ||
+      c.hospitalName.toLowerCase().includes(term)
+    ).map(c => ({ 
+      id: c.id,
+      type: 'CLAIM', 
+      title: `${c.id} - ${c.customerName}`, 
+      sub: `Claim • ${c.hospitalName} (${c.status})`, 
+      link: '/claims' 
+    }));
 
-    const combined = [...matchingLeads, ...matchingPolicies, ...matchingClaims];
+    const matchingStaff = MOCK_STAFF.filter(s =>
+      s.name.toLowerCase().includes(term) ||
+      s.email.toLowerCase().includes(term) ||
+      s.employeeId.toLowerCase().includes(term)
+    ).map(s => ({
+      id: s.employeeId,
+      type: 'STAFF',
+      title: `${s.name} (${s.employeeId})`,
+      sub: `Staff • ${s.role} (${s.email})`,
+      link: '/staff'
+    }));
+
+    const combined = [...matchingLeads, ...matchingPolicies, ...matchingClaims, ...matchingStaff];
     setSearchResults(combined);
     setShowSearchDropdown(true);
   }, [searchTerm]);
+
+  // Handle Enter Key press on search input
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (searchResults.length > 0) {
+        const topResult = searchResults[0];
+        navigate(topResult.link);
+        setShowSearchDropdown(false);
+        setSearchTerm('');
+      } else {
+        alert(`No records found for "${searchTerm}". Try searching by customer name, policy number, or phone.`);
+      }
+    }
+  };
 
   // Click outside listener for Search, Role, and Profile dropdowns
   useEffect(() => {
@@ -79,23 +130,36 @@ export const Header = () => {
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
-        {/* Left: Brand Identity Logo */}
+        {/* Left: Brand Logo */}
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
           <Logo className="h-10 w-auto" />
         </div>
 
-        {/* Center: Live Interactive Global Search Bar */}
+        {/* Center: Robust Live Interactive Global Search Bar */}
         <div className="flex-1 max-w-md relative" ref={searchRef}>
           <div className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input 
               type="text"
-              placeholder="Search Customer, Policy #, Lead ID, Mobile or Claim..."
+              placeholder="Search Customer, Policy #, Lead ID, Mobile, Claim or Staff..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               onFocus={() => searchTerm.trim() && setShowSearchDropdown(true)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-100/80 hover:bg-slate-100 focus:bg-white border border-transparent focus:border-[#1E6091] text-xs transition outline-none font-medium text-slate-800"
+              className="w-full pl-10 pr-9 py-2 rounded-xl bg-slate-100/80 hover:bg-slate-100 focus:bg-white border border-transparent focus:border-[#1E6091] text-xs transition outline-none font-medium text-slate-800"
             />
+            {searchTerm && (
+              <button 
+                onClick={() => {
+                  setSearchTerm('');
+                  setSearchResults([]);
+                  setShowSearchDropdown(false);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
 
           {/* Live Search Results Dropdown */}
@@ -103,7 +167,7 @@ export const Header = () => {
             <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in duration-150">
               <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                 <span className="text-[11px] font-extrabold text-slate-600 uppercase">Search Results ({searchResults.length})</span>
-                <span className="text-[10px] text-slate-400">Click result to view</span>
+                <span className="text-[10px] text-slate-400">Press Enter or click result</span>
               </div>
 
               <div className="max-h-64 overflow-y-auto divide-y divide-slate-100">
@@ -122,7 +186,7 @@ export const Header = () => {
                         <span className="font-bold text-slate-900 block">{res.title}</span>
                         <span className="text-[10px] text-slate-500">{res.sub}</span>
                       </div>
-                      <ExternalLink className="h-3.5 w-3.5 text-brand-600" />
+                      <ExternalLink className="h-3.5 w-3.5 text-[#1E6091]" />
                     </div>
                   ))
                 ) : (
@@ -135,15 +199,9 @@ export const Header = () => {
           )}
         </div>
 
-        {/* Right Actions: Location Badge, Role Switcher & User Profile */}
+        {/* Right Actions: Role Switcher & User Profile */}
         <div className="flex items-center space-x-3">
           
-          {/* Location Badge (Kanchipuram Office) */}
-          <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold">
-            <MapPin className="h-3.5 w-3.5 text-[#1E6091]" />
-            <span>Kanchipuram Office</span>
-          </div>
-
           {/* Role Switcher Button */}
           <div className="relative" ref={roleRef}>
             <button
