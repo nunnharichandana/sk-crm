@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
+import { Logo } from '../common/Logo';
 import { 
   Bell, 
   Search, 
-  ShieldCheck, 
   UserCheck, 
   LogOut, 
   ChevronDown,
-  Building2,
+  MapPin,
   Sparkles
 } from 'lucide-react';
 
@@ -20,23 +20,12 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-30 bg-[#1E6091] text-white shadow-md transition-all">
-      <div className="flex items-center justify-between px-6 py-3">
+      <div className="flex items-center justify-between px-6 py-2.5">
         
-        {/* Left: Brand Identity */}
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-md border border-white/20 shadow-inner">
-              <ShieldCheck className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-lg font-extrabold tracking-tight text-white">SK SMART INSURANCE</span>
-                <span className="rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-50 border border-white/20">
-                  CRM PORTAL
-                </span>
-              </div>
-              <p className="text-xs text-brand-100/90 font-medium">Insurance Brokerage Management</p>
-            </div>
+        {/* Left: SK SMART INVESTMENTS Brand Identity */}
+        <div className="flex items-center space-x-3">
+          <div className="bg-white p-1.5 rounded-xl shadow-sm border border-slate-200">
+            <Logo size="sm" variant="full" />
           </div>
         </div>
 
@@ -46,27 +35,29 @@ export const Header = () => {
             <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
             <input 
               type="text"
-              placeholder="Search Leads, Policies, Customers or Claim IDs... (Ctrl+K)"
-              className="w-full rounded-xl bg-white/10 pl-10 pr-4 py-2 text-sm text-white placeholder-white/70 backdrop-blur-md border border-white/15 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-brand-200 transition"
+              placeholder="Search Leads, Policies, Customers or Claims... (Ctrl+K)"
+              className="w-full rounded-xl bg-white/10 pl-10 pr-4 py-2 text-xs text-white placeholder-white/70 backdrop-blur-md border border-white/15 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-brand-200 transition"
             />
           </div>
         </div>
 
-        {/* Right: Role Switcher, Branch, Notifications & User Menu */}
+        {/* Right: Location, Role Switcher, Notifications & User Profile */}
         <div className="flex items-center space-x-4">
           
-          {/* Branch Indicator */}
-          <div className="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-white/10 text-xs text-brand-100 border border-white/15">
-            <Building2 className="h-3.5 w-3.5 text-brand-200" />
-            <span className="font-semibold">{user.branch}</span>
+          {/* Location Badge (Kanchipuram, Tamil Nadu) */}
+          <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-xs text-brand-50 border border-white/15">
+            <MapPin className="h-3.5 w-3.5 text-amber-300" />
+            <span className="font-bold">Kanchipuram, Tamil Nadu</span>
           </div>
 
-          {/* Dynamic Role Switcher (Restricted to 4 Roles: Admin, Manager, Team Leader, Staff) */}
-          <div className="relative">
+          {/* Dynamic Role Switcher with Mouse Leave Auto-Close */}
+          <div 
+            className="relative"
+            onMouseLeave={() => setShowRoleDropdown(false)}
+          >
             <button 
               onClick={() => setShowRoleDropdown(!showRoleDropdown)}
               className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-[#1A759F] hover:bg-brand-500 text-white text-xs font-semibold border border-white/20 shadow-sm transition"
-              title="Switch role view for live testing"
             >
               <UserCheck className="h-3.5 w-3.5 text-brand-100" />
               <span>{user.roleDisplayName}</span>
@@ -74,13 +65,13 @@ export const Header = () => {
             </button>
 
             {showRoleDropdown && (
-              <div className="absolute right-0 mt-2 w-60 rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute right-0 mt-1 w-60 rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in duration-100">
                 <div className="px-3 py-1.5 border-b border-slate-100">
                   <div className="flex items-center space-x-1 text-xs font-bold text-[#1E6091]">
                     <Sparkles className="h-3.5 w-3.5" />
                     <span>Role Switcher</span>
                   </div>
-                  <p className="text-[11px] text-slate-500">Switch active role view</p>
+                  <p className="text-[11px] text-slate-500">Switch role view for testing</p>
                 </div>
                 <div className="py-1">
                   {roles.map((r) => (
@@ -114,8 +105,11 @@ export const Header = () => {
             )}
           </button>
 
-          {/* User Profile Avatar Dropdown */}
-          <div className="relative">
+          {/* User Profile Avatar Dropdown with Mouse Leave Auto-Close */}
+          <div 
+            className="relative"
+            onMouseLeave={() => setShowUserDropdown(false)}
+          >
             <button 
               onClick={() => setShowUserDropdown(!showUserDropdown)}
               className="flex items-center space-x-2 focus:outline-none"
@@ -128,7 +122,7 @@ export const Header = () => {
             </button>
 
             {showUserDropdown && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 py-2 z-50">
+              <div className="absolute right-0 mt-1 w-56 rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in duration-100">
                 <div className="px-4 py-2.5 border-b border-slate-100">
                   <p className="text-sm font-bold text-slate-900">{user.name}</p>
                   <p className="text-xs text-slate-500">{user.email}</p>

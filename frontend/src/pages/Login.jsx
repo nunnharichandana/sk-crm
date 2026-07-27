@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Lock, Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Logo } from '../components/common/Logo';
+import { Lock, Mail, ArrowRight, CheckCircle2, MapPin, Building2 } from 'lucide-react';
 
 export const Login = () => {
   const { login, switchRole } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@sksmartinsurance.com');
+  const [email, setEmail] = useState('prakash.md@sksmartinvestments.com');
   const [password, setPassword] = useState('Password@123');
 
   const handleSubmit = (e) => {
@@ -34,42 +35,52 @@ export const Login = () => {
         {/* Left Info Panel */}
         <div className="bg-[#1E6091] p-8 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="space-y-6">
-            <div className="flex items-center space-x-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20">
-                <ShieldCheck className="h-7 w-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-extrabold tracking-tight">SK SMART INSURANCE</h1>
-                <p className="text-xs text-brand-100/90 font-medium">Enterprise CRM System</p>
-              </div>
+            
+            {/* Official Logo Banner */}
+            <div className="bg-white p-4 rounded-2xl shadow-md border border-slate-100 max-w-xs">
+              <Logo size="md" variant="full" />
             </div>
 
-            <div className="pt-4 space-y-4">
-              <h2 className="text-2xl font-bold tracking-tight leading-snug">
-                Powering Next-Gen Insurance Operations
+            <div className="pt-2 space-y-3">
+              <h2 className="text-xl font-extrabold tracking-tight leading-snug">
+                SK SMART INVESTMENTS
               </h2>
-              <p className="text-xs text-brand-100/80 leading-relaxed">
-                Streamlined portal for Admin, Manager, Team Leader, and Staff Advisors.
+              <span className="badge bg-amber-400 text-slate-900 font-extrabold text-[10px]">
+                INSURANCE AND INVESTMENTS SPECIALIST
+              </span>
+              <p className="text-xs text-brand-100/90 leading-relaxed pt-1">
+                Enterprise CRM Portal for Managing Director <strong>Prakash Gajendran</strong> and team in Kanchipuram.
               </p>
             </div>
 
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2 pt-1 text-xs text-brand-50">
+              <div className="flex items-center space-x-2">
+                <MapPin className="h-4 w-4 text-amber-300" />
+                <span>Kanchipuram, Tamil Nadu - Office Headquarters</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Building2 className="h-4 w-4 text-brand-200" />
+                <span>Managing Director: Prakash Gajendran</span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5 pt-2 border-t border-white/15 text-xs">
               {[
-                'JWT Secured Authorization',
-                'Executive Analytics & Standard Linear Graphs',
-                'Automated Renewal & WhatsApp Reminders',
-                'Audit Logging & Compliance Ready'
+                'JWT Secured Role-Based Portal',
+                'Standard Linear Analytics Graphs',
+                'Automated Policy & WhatsApp Reminders',
+                'Audit Logging & IRDA Compliance'
               ].map((feat, i) => (
-                <div key={i} className="flex items-center space-x-2 text-xs text-brand-50">
-                  <CheckCircle2 className="h-4 w-4 text-brand-200" />
+                <div key={i} className="flex items-center space-x-2 text-brand-50">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
                   <span>{feat}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="pt-8 text-[11px] text-brand-200 border-t border-white/10">
-            © 2026 SK Smart Insurance Services. All rights reserved.
+          <div className="pt-6 text-[11px] text-brand-200 border-t border-white/10">
+            © 2026 SK SMART INVESTMENTS. All rights reserved.
           </div>
         </div>
 
@@ -132,25 +143,25 @@ export const Login = () => {
               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Login as:</p>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <button 
-                  onClick={() => handleQuickLogin('ADMIN', 'admin@sksmartinsurance.com')}
+                  onClick={() => handleQuickLogin('ADMIN', 'prakash.md@sksmartinvestments.com')}
                   className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
                 >
-                  ⚙️ Admin
+                  ⚙️ Admin (MD)
                 </button>
                 <button 
-                  onClick={() => handleQuickLogin('MANAGER', 'bm.mumbai@sksmartinsurance.com')}
+                  onClick={() => handleQuickLogin('MANAGER', 'manager.kanchipuram@sksmartinvestments.com')}
                   className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
                 >
                   🏢 Manager
                 </button>
                 <button 
-                  onClick={() => handleQuickLogin('TEAM_LEADER', 'tl.health@sksmartinsurance.com')}
+                  onClick={() => handleQuickLogin('TEAM_LEADER', 'tl.health@sksmartinvestments.com')}
                   className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
                 >
                   👥 Team Leader
                 </button>
                 <button 
-                  onClick={() => handleQuickLogin('STAFF', 'priya.advisor@sksmartinsurance.com')}
+                  onClick={() => handleQuickLogin('STAFF', 'priya.advisor@sksmartinvestments.com')}
                   className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
                 >
                   👤 Staff Advisor
