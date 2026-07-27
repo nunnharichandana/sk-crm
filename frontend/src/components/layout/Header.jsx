@@ -24,6 +24,8 @@ export const Header = () => {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
   const searchRef = useRef(null);
+  const roleRef = useRef(null);
+  const profileRef = useRef(null);
 
   // Live Search Logic across Leads, Policies, and Claims
   useEffect(() => {
@@ -56,11 +58,17 @@ export const Header = () => {
     setShowSearchDropdown(true);
   }, [searchTerm]);
 
-  // Click outside to close search dropdown
+  // Click outside listener for Search, Role, and Profile dropdowns
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setShowSearchDropdown(false);
+      }
+      if (roleRef.current && !roleRef.current.contains(e.target)) {
+        setShowRoleDropdown(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setShowProfileDropdown(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -71,7 +79,7 @@ export const Header = () => {
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
-        {/* Left: Brand Identity Logo (Single clean display) */}
+        {/* Left: Brand Identity Logo */}
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
           <Logo className="h-10 w-auto" />
         </div>
@@ -127,7 +135,7 @@ export const Header = () => {
           )}
         </div>
 
-        {/* Right Actions: Single Location Badge, Role Switcher & User Profile */}
+        {/* Right Actions: Location Badge, Role Switcher & User Profile */}
         <div className="flex items-center space-x-3">
           
           {/* Location Badge (Kanchipuram Office) */}
@@ -136,12 +144,11 @@ export const Header = () => {
             <span>Kanchipuram Office</span>
           </div>
 
-          {/* Quick Role Switcher (Admin, Manager, Team Leader, Staff Advisor) */}
-          <div className="relative" onMouseLeave={() => setShowRoleDropdown(false)}>
+          {/* Role Switcher Button */}
+          <div className="relative" ref={roleRef}>
             <button
               onClick={() => setShowRoleDropdown(!showRoleDropdown)}
-              onMouseEnter={() => setShowRoleDropdown(true)}
-              className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-brand-50 border border-brand-200 text-[#1E6091] hover:bg-brand-100 transition text-xs font-bold shadow-xs"
+              className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-brand-50 border border-brand-200 text-[#1E6091] hover:bg-brand-100 transition text-xs font-bold shadow-xs cursor-pointer"
             >
               <UserCheck className="h-3.5 w-3.5" />
               <span>Role: {user?.roleDisplayName || 'Admin'}</span>
@@ -149,7 +156,7 @@ export const Header = () => {
             </button>
 
             {showRoleDropdown && (
-              <div className="absolute right-0 mt-1 w-60 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in duration-150">
+              <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in duration-150">
                 <div className="px-4 py-2 border-b border-slate-100">
                   <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Switch Account Role</p>
                 </div>
@@ -160,7 +167,7 @@ export const Header = () => {
                       switchRole(r.id);
                       setShowRoleDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-xs hover:bg-brand-50 transition flex items-center justify-between ${
+                    className={`w-full text-left px-4 py-2 text-xs hover:bg-brand-50 transition flex items-center justify-between cursor-pointer ${
                       user?.role === r.id ? 'bg-brand-50 text-[#1E6091] font-extrabold' : 'text-slate-700'
                     }`}
                   >
@@ -176,11 +183,10 @@ export const Header = () => {
           </div>
 
           {/* User Profile Avatar Menu */}
-          <div className="relative" onMouseLeave={() => setShowProfileDropdown(false)}>
+          <div className="relative" ref={profileRef}>
             <button
               onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-              onMouseEnter={() => setShowProfileDropdown(true)}
-              className="flex items-center space-x-2 p-1.5 rounded-xl hover:bg-slate-100 transition"
+              className="flex items-center space-x-2.5 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer border border-transparent hover:border-slate-200"
             >
               <img 
                 src={user?.avatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150"} 
@@ -191,10 +197,11 @@ export const Header = () => {
                 <span className="text-xs font-bold text-slate-900 block leading-tight">{user?.name}</span>
                 <span className="text-[10px] text-slate-500 block leading-tight">{user?.roleDisplayName}</span>
               </div>
+              <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
             </button>
 
             {showProfileDropdown && (
-              <div className="absolute right-0 mt-1 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in duration-150">
+              <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in duration-150">
                 <div className="px-4 py-3 border-b border-slate-100">
                   <p className="text-xs font-bold text-slate-900">{user?.name}</p>
                   <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
@@ -206,9 +213,9 @@ export const Header = () => {
                     navigate('/settings');
                     setShowProfileDropdown(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition flex items-center space-x-2"
+                  className="w-full text-left px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition flex items-center space-x-2 cursor-pointer font-bold"
                 >
-                  <User className="h-3.5 w-3.5 text-slate-500" />
+                  <User className="h-4 w-4 text-[#1E6091]" />
                   <span>Profile Settings</span>
                 </button>
 
@@ -217,9 +224,9 @@ export const Header = () => {
                     logout();
                     navigate('/login');
                   }}
-                  className="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 transition flex items-center space-x-2 font-bold border-t border-slate-100 mt-1"
+                  className="w-full text-left px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 transition flex items-center space-x-2 font-bold border-t border-slate-100 mt-1 cursor-pointer"
                 >
-                  <LogOut className="h-3.5 w-3.5" />
+                  <LogOut className="h-4 w-4" />
                   <span>Sign Out</span>
                 </button>
               </div>
