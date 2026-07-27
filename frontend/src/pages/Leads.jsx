@@ -1,30 +1,29 @@
 import React, { useState } from 'react';
-import { MOCK_LEADS, MOCK_STAFF, COMPANY_INFO } from '../services/mockDataService';
+import { useAuth } from '../context/AuthContext';
+import { MOCK_LEADS, MOCK_STAFF } from '../services/mockDataService';
 import { 
   UserPlus, 
   Search, 
   Filter, 
-  Download, 
   FileSpreadsheet, 
-  FileText, 
-  MoreVertical, 
-  Phone, 
-  Mail, 
   Send,
-  CheckCircle2,
-  XCircle,
-  TrendingUp,
   UserCheck,
-  Building2,
-  X
+  Edit,
+  Trash2,
+  X,
+  Save
 } from 'lucide-react';
 
 export const Leads = () => {
+  const { user } = useAuth();
+  const isAdmin = user.role === 'ADMIN';
+
   const [leadsList, setLeadsList] = useState(MOCK_LEADS);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(null);
+  const [editingLead, setEditingLead] = useState(null);
 
   // New Lead Form State
   const [newLead, setNewLead] = useState({
@@ -63,6 +62,19 @@ export const Leads = () => {
     setShowAddModal(false);
   };
 
+  const handleUpdateLead = (e) => {
+    e.preventDefault();
+    setLeadsList(prev => prev.map(l => l.id === editingLead.id ? editingLead : l));
+    setEditingLead(null);
+    alert(`Lead details updated successfully for ${editingLead.id}!`);
+  };
+
+  const handleDeleteLead = (id) => {
+    if (window.confirm(`Are you sure you want to delete lead record ${id}?`)) {
+      setLeadsList(prev => prev.filter(l => l.id !== id));
+    }
+  };
+
   const filteredLeads = leadsList.filter(lead => {
     const matchesSearch = lead.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           lead.mobileNumber.includes(searchTerm) ||
@@ -78,7 +90,9 @@ export const Leads = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Lead Lifecycle Management</h2>
-          <p className="text-xs text-slate-500">Track, score, transfer and convert insurance prospects</p>
+          <p className="text-xs text-slate-500">
+            {isAdmin ? 'Admin Master Control: View, Edit, Score, Transfer & Delete Leads' : 'Track, score, transfer and convert insurance prospects'}
+          </p>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -201,21 +215,40 @@ export const Leads = () => {
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <div className="flex items-center justify-end space-x-2">
+                    <div className="flex items-center justify-end space-x-1.5">
                       <button 
                         onClick={() => setShowTransferModal(lead)}
                         className="p-1.5 rounded-lg bg-slate-100 hover:bg-brand-100 text-slate-600 hover:text-brand-700 transition"
                         title="Transfer Lead"
                       >
-                        <UserCheck className="h-4 w-4" />
+                        <UserCheck className="h-3.5 w-3.5" />
                       </button>
                       <button 
                         onClick={() => alert(`Initiating quick WhatsApp follow-up link for ${lead.customerName}`)}
                         className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-600 font-bold transition"
                         title="WhatsApp Reminder"
                       >
-                        <Send className="h-4 w-4" />
+                        <Send className="h-3.5 w-3.5" />
                       </button>
+
+                      {isAdmin && (
+                        <>
+                          <button 
+                            onClick={() => setEditingLead({ ...lead })}
+                            className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold transition"
+                            title="Edit Lead Details (Admin Only)"
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteLead(lead.id)}
+                            className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold transition"
+                            title="Delete Lead Record (Admin Only)"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -224,6 +257,106 @@ export const Leads = () => {
           </table>
         </div>
       </div>
+
+      {/* Admin Edit Lead Modal */}
+      {editingLead && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in duration-150">
+            <div className="px-6 py-4 bg-[#1E6091] text-white flex items-center justify-between">
+              <h3 className="font-bold text-sm">Admin: Edit Lead ({editingLead.id})</h3>
+              <button onClick={() => setEditingLead(null)} className="text-white/80 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateLead} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Customer Name</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={editingLead.customerName}
+                    onChange={(e) => setEditingLead({ ...editingLead, customerName: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={editingLead.mobileNumber}
+                    onChange={(e) => setEditingLead({ ...editingLead, mobileNumber: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Insurance Type</label>
+                  <select 
+                    value={editingLead.insuranceType}
+                    onChange={(e) => setEditingLead({ ...editingLead, insuranceType: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none"
+                  >
+                    <option value="Health Insurance">Health Insurance</option>
+                    <option value="Life Insurance">Life Insurance</option>
+                    <option value="Motor Insurance">Motor Insurance</option>
+                    <option value="Mutual Funds & Investments">Mutual Funds & Investments</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Estimated Premium (₹)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={editingLead.estimatedPremium}
+                    onChange={(e) => setEditingLead({ ...editingLead, estimatedPremium: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Assigned Staff</label>
+                  <select 
+                    value={editingLead.assignedStaff}
+                    onChange={(e) => setEditingLead({ ...editingLead, assignedStaff: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none font-bold"
+                  >
+                    {MOCK_STAFF.map(s => (
+                      <option key={s.id} value={s.name}>{s.name} ({s.role})</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Status</label>
+                  <select 
+                    value={editingLead.status}
+                    onChange={(e) => setEditingLead({ ...editingLead, status: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none font-bold"
+                  >
+                    {statuses.filter(s => s !== 'ALL').map(st => (
+                      <option key={st} value={st}>{st}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setEditingLead(null)} className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-[#1E6091] text-white text-xs font-bold shadow flex items-center space-x-1">
+                  <Save className="h-4 w-4" />
+                  <span>Save Lead Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Add Lead Modal */}
       {showAddModal && (

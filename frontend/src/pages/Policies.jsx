@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { MOCK_POLICIES } from '../services/mockDataService';
 import { 
   FileText, 
@@ -6,13 +7,20 @@ import {
   Plus,
   Search,
   CheckCircle2,
-  X
+  Edit,
+  Trash2,
+  X,
+  Save
 } from 'lucide-react';
 
 export const Policies = () => {
+  const { user } = useAuth();
+  const isAdmin = user.role === 'ADMIN';
+
   const [policiesList, setPoliciesList] = useState(MOCK_POLICIES);
   const [searchTerm, setSearchTerm] = useState('');
   const [showIssueModal, setShowIssueModal] = useState(false);
+  const [editingPolicy, setEditingPolicy] = useState(null);
 
   // Issue Policy Form State
   const [newPolicy, setNewPolicy] = useState({
@@ -44,6 +52,19 @@ export const Policies = () => {
     alert(`Policy ${created.id} issued successfully for ${created.customerName}!`);
   };
 
+  const handleUpdatePolicy = (e) => {
+    e.preventDefault();
+    setPoliciesList(prev => prev.map(p => p.id === editingPolicy.id ? editingPolicy : p));
+    setEditingPolicy(null);
+    alert(`Policy details updated successfully for ${editingPolicy.id}!`);
+  };
+
+  const handleDeletePolicy = (id) => {
+    if (window.confirm(`Are you sure you want to delete policy ${id}?`)) {
+      setPoliciesList(prev => prev.filter(p => p.id !== id));
+    }
+  };
+
   const filteredPolicies = policiesList.filter(pol =>
     pol.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     pol.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -57,7 +78,9 @@ export const Policies = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Policy Register & Contract Management</h2>
-          <p className="text-xs text-slate-500">Issued policies, active coverage status & policy certificate downloads</p>
+          <p className="text-xs text-slate-500">
+            {isAdmin ? 'Admin Master Control: View, Edit, Issue & Delete Policy Records' : 'Issued policies, active coverage status & policy certificate downloads'}
+          </p>
         </div>
 
         <button 
@@ -100,7 +123,7 @@ export const Policies = () => {
                 <th className="p-4">Gross Premium</th>
                 <th className="p-4">Validity</th>
                 <th className="p-4">Status</th>
-                <th className="p-4 text-right">Certificate</th>
+                <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
@@ -120,14 +143,34 @@ export const Policies = () => {
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <button 
-                      onClick={() => alert(`Downloading official PDF Policy Certificate for ${pol.id}`)}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-brand-100 text-brand-700 font-bold transition flex items-center space-x-1 ml-auto"
-                      title="Download PDF Policy Bond"
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                      <span>PDF Bond</span>
-                    </button>
+                    <div className="flex items-center justify-end space-x-2">
+                      <button 
+                        onClick={() => alert(`Downloading official PDF Policy Certificate for ${pol.id}`)}
+                        className="p-1.5 rounded-lg bg-slate-100 hover:bg-brand-100 text-brand-700 font-bold transition"
+                        title="Download PDF Policy Bond"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                      </button>
+
+                      {isAdmin && (
+                        <>
+                          <button 
+                            onClick={() => setEditingPolicy({ ...pol })}
+                            className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold transition"
+                            title="Edit Policy Details (Admin Only)"
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                          </button>
+                          <button 
+                            onClick={() => handleDeletePolicy(pol.id)}
+                            className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold transition"
+                            title="Delete Policy Record (Admin Only)"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -135,6 +178,116 @@ export const Policies = () => {
           </table>
         </div>
       </div>
+
+      {/* Admin Edit Policy Modal */}
+      {editingPolicy && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in duration-150">
+            <div className="px-6 py-4 bg-[#1E6091] text-white flex items-center justify-between">
+              <h3 className="font-bold text-sm">Admin: Edit Policy Details ({editingPolicy.id})</h3>
+              <button onClick={() => setEditingPolicy(null)} className="text-white/80 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdatePolicy} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Customer Full Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={editingPolicy.customerName}
+                  onChange={(e) => setEditingPolicy({ ...editingPolicy, customerName: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Insurance Company</label>
+                  <input 
+                    type="text"
+                    required
+                    value={editingPolicy.insuranceCompany}
+                    onChange={(e) => setEditingPolicy({ ...editingPolicy, insuranceCompany: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Policy Type</label>
+                  <select 
+                    value={editingPolicy.type}
+                    onChange={(e) => setEditingPolicy({ ...editingPolicy, type: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none"
+                  >
+                    <option value="Health Insurance">Health Insurance</option>
+                    <option value="Life Insurance">Life Insurance</option>
+                    <option value="Motor Insurance">Motor Insurance</option>
+                    <option value="Mutual Funds & Investments">Mutual Funds & Investments</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Sum Insured (₹)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={editingPolicy.sumInsured}
+                    onChange={(e) => setEditingPolicy({ ...editingPolicy, sumInsured: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Gross Premium (₹)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={editingPolicy.grossPremium}
+                    onChange={(e) => setEditingPolicy({ ...editingPolicy, grossPremium: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Expiry Date</label>
+                  <input 
+                    type="date" 
+                    required 
+                    value={editingPolicy.expiryDate}
+                    onChange={(e) => setEditingPolicy({ ...editingPolicy, expiryDate: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Policy Status</label>
+                  <select 
+                    value={editingPolicy.status}
+                    onChange={(e) => setEditingPolicy({ ...editingPolicy, status: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none font-bold"
+                  >
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="PENDING_RENEWAL">PENDING_RENEWAL</option>
+                    <option value="EXPIRED">EXPIRED</option>
+                    <option value="CANCELLED">CANCELLED</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setEditingPolicy(null)} className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-[#1E6091] text-white text-xs font-bold shadow flex items-center space-x-1">
+                  <Save className="h-4 w-4" />
+                  <span>Save Policy Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Issue Policy Modal */}
       {showIssueModal && (
