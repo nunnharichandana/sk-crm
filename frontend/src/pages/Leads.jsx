@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MOCK_LEADS, MOCK_STAFF, MOCK_BRANCHES } from '../services/mockDataService';
+import { MOCK_LEADS, MOCK_STAFF, COMPANY_INFO } from '../services/mockDataService';
 import { 
   UserPlus, 
   Search, 
@@ -34,7 +34,7 @@ export const Leads = () => {
     insuranceType: 'Health Insurance',
     estimatedPremium: '',
     assignedStaff: 'Priya Nair',
-    city: 'Mumbai',
+    city: 'Kanchipuram',
     priority: 'HIGH'
   });
 
@@ -52,8 +52,8 @@ export const Leads = () => {
       estimatedPremium: parseFloat(newLead.estimatedPremium) || 25000,
       leadSource: 'PORTAL_MANUAL',
       company: 'HDFC ERGO',
-      assignedManager: 'Ananya Deshmukh',
-      branch: 'Corporate Headquarters',
+      assignedManager: 'Prakash Gajendran',
+      branch: 'Kanchipuram Office',
       status: 'NEW',
       leadScore: 75,
       createdDate: new Date().toISOString().split('T')[0],
@@ -83,7 +83,7 @@ export const Leads = () => {
 
         <div className="flex items-center space-x-3">
           <button 
-            onClick={() => alert("Simulated Excel Report Generation: Exporting all leads to sk_leads_export.xlsx")}
+            onClick={() => alert("Exporting all leads to sk_leads_export.xlsx")}
             className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-sm hover:bg-slate-50 transition"
           >
             <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
@@ -92,7 +92,7 @@ export const Leads = () => {
 
           <button 
             onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#0A4DA2] hover:bg-brand-700 text-white font-bold text-xs shadow transition"
+            className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#1E6091] hover:bg-brand-700 text-white font-bold text-xs shadow transition"
           >
             <UserPlus className="h-4 w-4" />
             <span>Create New Lead</span>
@@ -179,7 +179,7 @@ export const Leads = () => {
                       <UserCheck className="h-3.5 w-3.5 text-brand-600" />
                       <div>
                         <span className="font-bold text-slate-800 block">{lead.assignedStaff}</span>
-                        <span className="text-[10px] text-slate-400">{lead.branch}</span>
+                        <span className="text-[10px] text-slate-400">Kanchipuram</span>
                       </div>
                     </div>
                   </td>
@@ -205,7 +205,7 @@ export const Leads = () => {
                       <button 
                         onClick={() => setShowTransferModal(lead)}
                         className="p-1.5 rounded-lg bg-slate-100 hover:bg-brand-100 text-slate-600 hover:text-brand-700 transition"
-                        title="Transfer Lead to another Staff/Manager"
+                        title="Transfer Lead"
                       >
                         <UserCheck className="h-4 w-4" />
                       </button>
@@ -229,7 +229,7 @@ export const Leads = () => {
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="px-6 py-4 bg-[#0A4DA2] text-white flex items-center justify-between">
+            <div className="px-6 py-4 bg-[#1E6091] text-white flex items-center justify-between">
               <h3 className="font-bold text-sm">Add New Customer Lead</h3>
               <button onClick={() => setShowAddModal(false)} className="text-white/80 hover:text-white">
                 <X className="h-5 w-5" />
@@ -271,7 +271,7 @@ export const Leads = () => {
                     <option value="Health Insurance">Health Insurance</option>
                     <option value="Life Insurance">Life Insurance</option>
                     <option value="Motor Insurance">Motor Insurance</option>
-                    <option value="Corporate Fire">Corporate Fire</option>
+                    <option value="Mutual Funds & Investments">Mutual Funds & Investments</option>
                   </select>
                 </div>
                 <div>
@@ -296,7 +296,7 @@ export const Leads = () => {
                 </button>
                 <button 
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-brand-600 text-white text-xs font-bold hover:bg-brand-700 shadow"
+                  className="px-5 py-2 rounded-xl bg-[#1E6091] text-white text-xs font-bold hover:bg-brand-700 shadow"
                 >
                   Save Lead
                 </button>
@@ -317,7 +317,7 @@ export const Leads = () => {
               <label className="block text-xs font-bold text-slate-700 mb-1">Select Target Staff</label>
               <select className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none">
                 {MOCK_STAFF.map(st => (
-                  <option key={st.id} value={st.name}>{st.name} ({st.branch})</option>
+                  <option key={st.id} value={st.name}>{st.name} ({st.role})</option>
                 ))}
               </select>
             </div>
@@ -329,7 +329,7 @@ export const Leads = () => {
                   alert(`Lead ${showTransferModal.id} successfully transferred!`);
                   setShowTransferModal(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-bold shadow"
+                className="px-4 py-2 rounded-xl bg-[#1E6091] text-white text-xs font-bold shadow"
               >
                 Confirm Transfer
               </button>
