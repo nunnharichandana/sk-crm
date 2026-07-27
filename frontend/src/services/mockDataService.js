@@ -2,11 +2,13 @@
 // Company Name: SK SMART INVESTMENTS
 // Tagline: INSURANCE AND INVESTMENTS SPECIALIST
 // Primary Location: Kanchipuram, Tamil Nadu
+// Managing Director / Admin: Prakesh Gajendiran
+// Manager: Karthik
 
 export const COMPANY_INFO = {
   name: 'SK SMART INVESTMENTS',
   tagline: 'INSURANCE AND INVESTMENTS SPECIALIST',
-  mdName: 'Prakash Gajendran',
+  mdName: 'Prakesh Gajendiran',
   title: 'Admin',
   location: 'Kanchipuram, Tamil Nadu',
   address: 'No. 14, Gandhi Road, Near Kamakshi Amman Temple, Kanchipuram, Tamil Nadu - 631501',
@@ -18,8 +20,9 @@ export const COMPANY_INFO = {
 export const INITIAL_USER = {
   id: 1,
   employeeId: 'EMP001',
-  name: 'Prakash Gajendran',
+  name: 'Prakesh Gajendiran',
   email: 'admin@sksmartinvestments.com',
+  phone: '+91 98423 11223',
   role: 'ADMIN', // ADMIN, MANAGER, TEAM_LEADER, STAFF
   roleDisplayName: 'Admin',
   branch: 'Kanchipuram Office',
@@ -28,8 +31,8 @@ export const INITIAL_USER = {
 };
 
 export const MOCK_ROLES = [
-  { id: 'ADMIN', name: 'Admin', desc: 'System Configuration & Full Access', defaultName: 'Prakash Gajendran', email: 'admin@sksmartinvestments.com' },
-  { id: 'MANAGER', name: 'Manager', desc: 'Kanchipuram Operations & Client Allocation', defaultName: 'Ramesh K.', email: 'manager.kanchipuram@sksmartinvestments.com' },
+  { id: 'ADMIN', name: 'Admin', desc: 'System Configuration & Full Access', defaultName: 'Prakesh Gajendiran', email: 'admin@sksmartinvestments.com' },
+  { id: 'MANAGER', name: 'Manager', desc: 'Kanchipuram Operations & Client Allocation', defaultName: 'Karthik', email: 'karthik.manager@sksmartinvestments.com' },
   { id: 'TEAM_LEADER', name: 'Team Leader', desc: 'Team Oversight & Policy Review', defaultName: 'Rohan Mehta', email: 'tl.health@sksmartinvestments.com' },
   { id: 'STAFF', name: 'Staff Advisor', desc: 'Client Lead Management & Policy Issuance', defaultName: 'Priya Nair', email: 'priya.advisor@sksmartinvestments.com' },
 ];
@@ -83,7 +86,7 @@ export const MOCK_LEADS = [
     company: 'Star Health Insurance',
     estimatedPremium: 35000,
     assignedStaff: 'Priya Nair',
-    assignedManager: 'Prakash Gajendran',
+    assignedManager: 'Karthik',
     branch: 'Kanchipuram Office',
     priority: 'HIGH',
     status: 'INTERESTED',
@@ -104,7 +107,7 @@ export const MOCK_LEADS = [
     company: 'ICICI Prudential Life',
     estimatedPremium: 65000,
     assignedStaff: 'Priya Nair',
-    assignedManager: 'Prakash Gajendran',
+    assignedManager: 'Karthik',
     branch: 'Kanchipuram Office',
     priority: 'URGENT',
     status: 'QUOTATION_SENT',
@@ -125,7 +128,7 @@ export const MOCK_LEADS = [
     company: 'Tata AIG General',
     estimatedPremium: 18500,
     assignedStaff: 'Amit Verma',
-    assignedManager: 'Prakash Gajendran',
+    assignedManager: 'Karthik',
     branch: 'Kanchipuram Office',
     priority: 'MEDIUM',
     status: 'CONTACTED',
@@ -146,7 +149,7 @@ export const MOCK_LEADS = [
     company: 'HDFC ERGO',
     estimatedPremium: 42000,
     assignedStaff: 'Priya Nair',
-    assignedManager: 'Prakash Gajendran',
+    assignedManager: 'Karthik',
     branch: 'Kanchipuram Office',
     priority: 'HIGH',
     status: 'POLICY_ISSUED',
@@ -269,12 +272,12 @@ export const MOCK_CLAIMS = [
   }
 ];
 
-// MOCK STAFF WITH FULL LOGIN CREDENTIALS STORE
+// MOCK STAFF WITH CORRECTED NAMES & LOGIN CREDENTIALS
 export const MOCK_STAFF = [
   {
     id: 1,
     employeeId: 'EMP001',
-    name: 'Prakash Gajendran',
+    name: 'Prakesh Gajendiran',
     role: 'Admin',
     roleCode: 'ADMIN',
     branch: 'Kanchipuram Office',
@@ -291,11 +294,11 @@ export const MOCK_STAFF = [
   {
     id: 2,
     employeeId: 'EMP002',
-    name: 'Ramesh K.',
+    name: 'Karthik',
     role: 'Manager',
     roleCode: 'MANAGER',
     branch: 'Kanchipuram Office',
-    email: 'manager.kanchipuram@sksmartinvestments.com',
+    email: 'karthik.manager@sksmartinvestments.com',
     password: 'Manager@123',
     phone: '+91 98423 22334',
     target: 1500000,
@@ -359,9 +362,9 @@ export const MOCK_STAFF = [
 ];
 
 export const MOCK_AUDIT_LOGS = [
-  { id: 1, user: 'Prakash Gajendran (Admin)', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'Admin Prakash Gajendran logged into CRM' },
+  { id: 1, user: 'Prakesh Gajendiran (Admin)', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'Admin Prakesh Gajendiran logged into CRM' },
   { id: 2, user: 'Priya Nair', action: 'ISSUE_POLICY', module: 'Policy Module', timestamp: '2026-07-27 09:30:22', ip: '192.168.1.105', details: 'Issued policy POL-HDFC-2026-78901' },
-  { id: 3, user: 'Prakash Gajendran (Admin)', action: 'PROVISION_STAFF', module: 'Staff Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'Admin provisioned login credentials for Amit Verma' },
+  { id: 3, user: 'Prakesh Gajendiran (Admin)', action: 'PROVISION_STAFF', module: 'Staff Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'Admin provisioned login credentials for Karthik' },
 ];
 
 export const DASHBOARD_ANALYTICS = {

@@ -36,10 +36,11 @@ export const Admin = () => {
 
   // User Accounts State
   const [usersList, setUsersList] = useState([
-    { id: 1, name: 'Prakash Gajendran', email: 'prakash.md@sksmartinvestments.com', role: 'Managing Director (MD)', location: 'Kanchipuram Office', status: 'ACTIVE' },
-    { id: 2, name: 'Manager', email: 'manager.kanchipuram@sksmartinvestments.com', role: 'Manager', location: 'Kanchipuram Office', status: 'ACTIVE' },
-    { id: 3, name: 'Priya Nair', email: 'priya.advisor@sksmartinvestments.com', role: 'Staff Advisor', location: 'Kanchipuram Office', status: 'ACTIVE' },
-    { id: 4, name: 'Amit Verma', email: 'amit.advisor@sksmartinvestments.com', role: 'Staff Advisor', location: 'Kanchipuram Office', status: 'ACTIVE' },
+    { id: 1, name: 'Prakesh Gajendiran', email: 'admin@sksmartinvestments.com', role: 'Admin', location: 'Kanchipuram Office', status: 'ACTIVE' },
+    { id: 2, name: 'Karthik', email: 'karthik.manager@sksmartinvestments.com', role: 'Manager', location: 'Kanchipuram Office', status: 'ACTIVE' },
+    { id: 3, name: 'Rohan Mehta', email: 'tl.health@sksmartinvestments.com', role: 'Team Leader', location: 'Kanchipuram Office', status: 'ACTIVE' },
+    { id: 4, name: 'Priya Nair', email: 'priya.advisor@sksmartinvestments.com', role: 'Staff Advisor', location: 'Kanchipuram Office', status: 'ACTIVE' },
+    { id: 5, name: 'Amit Verma', email: 'amit.advisor@sksmartinvestments.com', role: 'Staff Advisor', location: 'Kanchipuram Office', status: 'ACTIVE' },
   ]);
 
   // Company Master Actions
@@ -100,9 +101,9 @@ export const Admin = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Managing Director (MD) Master Control Panel</h2>
+          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Admin Master Control Panel</h2>
           <p className="text-xs text-slate-500">
-            MD: <strong>{COMPANY_INFO.mdName}</strong> • Manage master insurance companies, policy products, users & audit logs
+            Admin: <strong>{COMPANY_INFO.mdName}</strong> • Manage partner insurance companies, policy product plans, users & audit logs
           </p>
         </div>
 
