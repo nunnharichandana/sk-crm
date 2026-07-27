@@ -17,7 +17,7 @@ import {
   X,
   FileSpreadsheet
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export const Dashboard = () => {
   const { user } = useAuth();
@@ -37,7 +37,7 @@ export const Dashboard = () => {
             </div>
             {/* DYNAMIC LOGGED-IN PERSON NAME GREETING */}
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-              Welcome back, {user?.name || 'Prakash Gajendran'}! 👋
+              Welcome back, {user?.name || 'Prakesh Gajendiran'}! 👋
             </h1>
             <p className="text-xs sm:text-sm text-blue-100 max-w-2xl">
               Logged in as <strong className="text-white">{user?.roleDisplayName || 'Admin'}</strong> ({user?.email || 'admin@sksmartinvestments.com'}). Your Kanchipuram CRM portal is live with active lead & policy pipelines.
@@ -47,14 +47,14 @@ export const Dashboard = () => {
           <div className="flex items-center space-x-3">
             <button 
               onClick={() => setShowAddLeadModal(true)}
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-white text-[#1E6091] font-bold text-xs shadow-lg hover:bg-blue-50 transition transform hover:-translate-y-0.5"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-white text-[#1E6091] font-bold text-xs shadow-lg hover:bg-blue-50 transition transform hover:-translate-y-0.5 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Add New Lead</span>
             </button>
             <button 
               onClick={() => setShowIssuePolicyModal(true)}
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-brand-700 text-white border border-brand-500/30 font-bold text-xs shadow-lg hover:bg-brand-800 transition transform hover:-translate-y-0.5"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-brand-700 text-white border border-brand-500/30 font-bold text-xs shadow-lg hover:bg-brand-800 transition transform hover:-translate-y-0.5 cursor-pointer"
             >
               <FileCheck className="h-4 w-4" />
               <span>Issue Policy</span>
@@ -140,28 +140,29 @@ export const Dashboard = () => {
 
       </div>
 
-      {/* Standard Straight Linear Chart */}
+      {/* Clean Bar Graph Section */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-card space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900">Weekly Lead & Revenue Performance Trend</h3>
-            <p className="text-xs text-slate-500">Standard linear grid tracking new leads vs converted policy revenue</p>
+            <h3 className="text-base font-bold text-slate-900">Weekly Lead & Converted Policies Bar Analysis</h3>
+            <p className="text-xs text-slate-500">Comparative weekly bar breakdown of new customer leads vs converted policies</p>
           </div>
-          <span className="badge badge-blue text-xs">Standard Cartesian Linear Grid</span>
+          <span className="badge badge-blue text-xs">Standard Bar Chart</span>
         </div>
 
         <div className="h-72 w-full pt-2">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={DASHBOARD_ANALYTICS.weeklyLeads}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+            <BarChart data={DASHBOARD_ANALYTICS.weeklyLeads} barGap={6}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
               <XAxis dataKey="day" stroke="#64748B" fontSize={11} tickLine={false} />
               <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
               />
-              <Line type="linear" dataKey="newLeads" name="New Leads" stroke="#1E6091" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-              <Line type="linear" dataKey="converted" name="Converted Policies" stroke="#52B69A" strokeWidth={3} dot={{ r: 4 }} />
-            </LineChart>
+              <Legend wrapperStyle={{ paddingTop: '10px', fontSize: '12px', fontWeight: 'bold' }} />
+              <Bar dataKey="newLeads" name="New Customer Leads" fill="#1E6091" radius={[6, 6, 0, 0]} maxBarSize={36} />
+              <Bar dataKey="converted" name="Converted Policies" fill="#52B69A" radius={[6, 6, 0, 0]} maxBarSize={36} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>

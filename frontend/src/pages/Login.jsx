@@ -39,12 +39,11 @@ export const Login = () => {
         avatar: matchedStaff.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150',
         permissions: ['ALL']
       });
-      navigate('/dashboard');
     } else {
       // Fallback: Login with selected role
       login(selectedRole);
-      navigate('/dashboard');
     }
+    navigate('/dashboard');
   };
 
   const handleQuickRoleSelect = (roleId) => {
@@ -65,15 +64,9 @@ export const Login = () => {
 
       <div className="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 space-y-6 relative z-10 animate-in fade-in duration-300">
         
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <Logo className="h-12 w-auto mx-auto" />
-          <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase mt-2">
-            {COMPANY_INFO.name}
-          </h2>
-          <p className="text-xs font-bold text-[#1E6091] uppercase tracking-wider">
-            {COMPANY_INFO.tagline}
-          </p>
+        {/* Brand Header (Single Clean Display) */}
+        <div className="text-center space-y-3">
+          <Logo className="h-12 w-auto mx-auto justify-center" />
           <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-700">
             <MapPin className="h-3 w-3 text-[#1E6091]" />
             <span>{COMPANY_INFO.location}</span>
@@ -89,7 +82,7 @@ export const Login = () => {
                 key={r.id}
                 type="button"
                 onClick={() => handleQuickRoleSelect(r.id)}
-                className={`p-2.5 rounded-xl border text-xs text-left transition ${
+                className={`p-2.5 rounded-xl border text-xs text-left transition cursor-pointer ${
                   selectedRole === r.id 
                     ? 'border-[#1E6091] bg-brand-50 text-[#1E6091] font-extrabold shadow-xs' 
                     : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 font-semibold'
@@ -143,7 +136,7 @@ export const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-2xl bg-[#1E6091] hover:bg-brand-700 text-white font-extrabold text-xs shadow-lg transition flex items-center justify-center space-x-2"
+            className="w-full py-3 rounded-2xl bg-[#1E6091] hover:bg-brand-700 text-white font-extrabold text-xs shadow-lg transition flex items-center justify-center space-x-2 cursor-pointer"
           >
             <span>Sign In to CRM Portal</span>
             <ArrowRight className="h-4 w-4" />
@@ -158,7 +151,7 @@ export const Login = () => {
           </div>
           <div className="grid grid-cols-1 gap-1 text-[10px] text-slate-600 font-mono">
             <div>• <strong>Admin:</strong> admin@sksmartinvestments.com / Password@123</div>
-            <div>• <strong>Manager:</strong> manager.kanchipuram@sksmartinvestments.com / Manager@123</div>
+            <div>• <strong>Manager:</strong> karthik.manager@sksmartinvestments.com / Manager@123</div>
             <div>• <strong>Team Leader:</strong> tl.health@sksmartinvestments.com / Leader@123</div>
             <div>• <strong>Staff Advisor:</strong> priya.advisor@sksmartinvestments.com / Advisor@123</div>
           </div>
