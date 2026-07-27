@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
     if (customUser) {
       setUser(customUser);
     } else {
-      switchRole(roleCode);
+      switchRole(roleCode || 'ADMIN');
     }
   };
 
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, switchRole, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, switchRole, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
