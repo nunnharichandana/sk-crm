@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
         console.error("Failed to parse saved user", e);
       }
     }
-    // Default Admin User
     return {
       id: 'STF-001',
       employeeId: 'EMP-ADM-001',
@@ -36,13 +35,31 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  // Helper: Format human-readable name from email string (e.g., "ramesh.kumar@gmail.com" -> "Ramesh Kumar")
   const formatNameFromEmail = (emailStr) => {
     if (!emailStr || !emailStr.includes('@')) return 'User';
     const prefix = emailStr.split('@')[0];
     return prefix
       .replace(/[._-]/g, ' ')
       .replace(/\b\w/g, c => c.toUpperCase());
+  };
+
+  const updateUserProfile = (updatedFields) => {
+    const updatedUser = {
+      ...user,
+      ...updatedFields
+    };
+    setUser(updatedUser);
+    localStorage.setItem('crm_active_user', JSON.stringify(updatedUser));
+
+    // Live synchronize MOCK_STAFF array
+    const staffIdx = MOCK_STAFF.findIndex(
+      s => (updatedUser.email && s.email.toLowerCase() === updatedUser.email.toLowerCase()) || s.id === updatedUser.id
+    );
+    if (staffIdx !== -1) {
+      if (updatedFields.name) MOCK_STAFF[staffIdx].name = updatedFields.name;
+      if (updatedFields.email) MOCK_STAFF[staffIdx].email = updatedFields.email;
+      if (updatedFields.avatar) MOCK_STAFF[staffIdx].avatar = updatedFields.avatar;
+    }
   };
 
   const loginWithFirebase = async (emailInput, password) => {
@@ -53,7 +70,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('firebaseIdToken', mockToken);
     setIdToken(mockToken);
 
-    // Match exact staff account in MOCK_STAFF by email or employee ID
     const matchedStaff = MOCK_STAFF.find(
       s => s.email.toLowerCase() === cleanEmail || s.employeeId.toLowerCase() === cleanEmail
     );
@@ -85,7 +101,6 @@ export const AuthProvider = ({ children }) => {
     setUser(activeUser);
     localStorage.setItem('crm_active_user', JSON.stringify(activeUser));
 
-    // Trigger backend registration & first-login workspace initialization
     try {
       await registerUserBackend(mockUid, activeUser.name, activeUser.email);
       await checkFirstLoginBackend();
@@ -109,7 +124,7 @@ export const AuthProvider = ({ children }) => {
       employeeId: 'EMP-NEW-' + Math.floor(100 + Math.random() * 900),
       name: name.trim() || formatNameFromEmail(cleanEmail),
       email: cleanEmail,
-      role: 'USER', // Initial role assigned as USER
+      role: 'USER',
       roleDisplayName: 'User',
       branch: 'Kanchipuram HQ',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150',
@@ -156,6 +171,7 @@ export const AuthProvider = ({ children }) => {
       idToken,
       loginWithFirebase,
       registerWithFirebase,
+      updateUserProfile,
       switchRole,
       logout,
       isAuthenticated: !!user
