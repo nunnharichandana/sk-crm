@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    --primary-blue: #0A4DA2;
-    --secondary-blue: #1976D2;
-    --light-blue: #EAF4FF;
+    --primary-blue: #1E6091;
+    --secondary-blue: #1A759F;
+    --light-blue: #EBF4F6;
     --white: #FFFFFF;
     --bg-main: #F8FAFC;
   }
@@ -33,7 +33,7 @@
   @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-colors;
 }
 .badge-blue {
-  @apply bg-brand-50 text-brand-600 border border-brand-200;
+  @apply bg-brand-50 text-brand-700 border border-brand-200;
 }
 .badge-green {
   @apply bg-emerald-50 text-emerald-700 border border-emerald-200;
@@ -50,7 +50,7 @@
 
 /* Glassmorphism Card Utility */
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(226, 232, 240, 0.8);
 }

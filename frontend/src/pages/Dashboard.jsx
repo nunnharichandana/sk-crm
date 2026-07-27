@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { DASHBOARD_ANALYTICS, MOCK_LEADS, MOCK_FOLLOWUPS } from '../services/mockDataService';
 import { 
   Users, 
@@ -14,11 +15,14 @@ import {
   ArrowDownRight,
   UserPlus,
   FilePlus,
-  Plus
+  Send,
+  X,
+  Zap,
+  Phone
 } from 'lucide-react';
 import { 
-  AreaChart, 
-  Area, 
+  LineChart, 
+  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -26,15 +30,47 @@ import {
   ResponsiveContainer,
   PieChart, 
   Pie, 
-  Cell, 
-  BarChart, 
-  Bar 
+  Cell,
+  Legend
 } from 'recharts';
 
 export const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // KPI Metrics Calculation
+  // Modal States for Dashboard Buttons
+  const [showAddLeadModal, setShowAddLeadModal] = useState(false);
+  const [showIssuePolicyModal, setShowIssuePolicyModal] = useState(false);
+
+  // New Lead Form State
+  const [newLead, setNewLead] = useState({
+    customerName: '',
+    mobileNumber: '',
+    insuranceType: 'Health Insurance',
+    estimatedPremium: 30000,
+  });
+
+  // Policy Form State
+  const [newPolicy, setNewPolicy] = useState({
+    customerName: 'Rahul Dravid',
+    insuranceCompany: 'Star Health Insurance',
+    sumInsured: 1000000,
+    grossPremium: 35000,
+  });
+
+  const handleAddLeadSubmit = (e) => {
+    e.preventDefault();
+    alert(`Lead for ${newLead.customerName} successfully created! Added to Lead Registry.`);
+    setShowAddLeadModal(false);
+  };
+
+  const handleIssuePolicySubmit = (e) => {
+    e.preventDefault();
+    alert(`Policy successfully issued for ${newPolicy.customerName}! Generated POL-SK-2026-${Math.floor(10000 + Math.random() * 90000)}.`);
+    setShowIssuePolicyModal(false);
+  };
+
+  // 8 Enterprise KPI Cards
   const kpis = [
     { title: "Total Active Leads", value: "1,248", change: "+14.2%", isUp: true, icon: Users, color: "text-brand-600", bg: "bg-brand-50" },
     { title: "Today's Follow-ups", value: "18", change: "4 Pending", isUp: true, icon: PhoneCall, color: "text-amber-600", bg: "bg-amber-50" },
@@ -50,23 +86,30 @@ export const Dashboard = () => {
     <div className="space-y-6">
       
       {/* Welcome Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between bg-gradient-to-r from-[#0A4DA2] to-[#1976D2] p-6 rounded-2xl text-white shadow-card">
+      <div className="flex flex-col md:flex-row md:items-center justify-between bg-gradient-to-r from-[#1E6091] to-[#1A759F] p-6 rounded-2xl text-white shadow-card">
         <div className="space-y-1">
           <span className="inline-block px-2.5 py-0.5 rounded-full bg-white/20 text-[11px] font-bold tracking-wider uppercase backdrop-blur-md">
-            CRM Portal • {user.roleDisplayName}
+            CRM Portal • {user.roleDisplayName} View
           </span>
           <h2 className="text-2xl font-extrabold tracking-tight">Welcome back, {user.name}!</h2>
           <p className="text-xs text-brand-100/90">
-            Here is your live performance overview for {user.branch} as of today.
+            Live operational dashboard for {user.branch}.
           </p>
         </div>
 
+        {/* Header Action Buttons (Fully Working Modals) */}
         <div className="mt-4 md:mt-0 flex items-center space-x-3">
-          <button className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-white text-brand-700 font-bold text-xs shadow hover:bg-brand-50 transition">
+          <button 
+            onClick={() => setShowAddLeadModal(true)}
+            className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white text-[#1E6091] font-bold text-xs shadow hover:bg-brand-50 transition"
+          >
             <UserPlus className="h-4 w-4" />
             <span>Add New Lead</span>
           </button>
-          <button className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-brand-500/80 hover:bg-brand-500 border border-white/20 text-white font-bold text-xs backdrop-blur-md transition">
+          <button 
+            onClick={() => setShowIssuePolicyModal(true)}
+            className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#1A759F] hover:bg-brand-500 border border-white/20 text-white font-bold text-xs backdrop-blur-md transition"
+          >
             <FilePlus className="h-4 w-4" />
             <span>Issue Policy</span>
           </button>
@@ -97,41 +140,49 @@ export const Dashboard = () => {
         })}
       </div>
 
-      {/* Analytics Charts Section */}
+      {/* Standard Straight-Line Linear Graph Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Main Lead & Revenue Growth Area Chart (2 cols) */}
+        {/* Standard Linear Grid Graph (No Wave Form) */}
         <div className="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Lead Conversion & Revenue Trend</h3>
-              <p className="text-xs text-slate-500">Weekly acquisition VS successful policy issuance revenue</p>
+              <h3 className="text-base font-bold text-slate-900">Lead Acquisition & Policy Conversion Graph</h3>
+              <p className="text-xs text-slate-500">Standard linear trend tracking for new leads VS converted policies</p>
             </div>
-            <span className="badge badge-blue text-[11px]">Real-time Feed</span>
+            <span className="badge badge-blue text-[11px]">Standard Linear Grid</span>
           </div>
 
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={DASHBOARD_ANALYTICS.weeklyLeads}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0A4DA2" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#0A4DA2" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#1976D2" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#1976D2" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                <XAxis dataKey="day" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#64748B' }} />
-                <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#64748B' }} />
+              <LineChart data={DASHBOARD_ANALYTICS.weeklyLeads}>
+                <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="#E2E8F0" />
+                <XAxis dataKey="day" tickLine={true} axisLine={true} tick={{ fontSize: 12, fill: '#475569' }} />
+                <YAxis tickLine={true} axisLine={true} tick={{ fontSize: 12, fill: '#475569' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} 
+                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.06)' }} 
                 />
-                <Area type="monotone" dataKey="newLeads" name="New Leads" stroke="#1976D2" strokeWidth={3} fillOpacity={1} fill="url(#colorLeads)" />
-                <Area type="monotone" dataKey="converted" name="Policies Converted" stroke="#0A4DA2" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
-              </AreaChart>
+                <Legend verticalAlign="top" height={36} />
+                {/* Standard Straight Line Graph (type="linear") */}
+                <Line 
+                  type="linear" 
+                  dataKey="newLeads" 
+                  name="New Leads Received" 
+                  stroke="#1E6091" 
+                  strokeWidth={2.5} 
+                  dot={{ r: 4, fill: '#1E6091' }}
+                  activeDot={{ r: 6 }}
+                />
+                <Line 
+                  type="linear" 
+                  dataKey="converted" 
+                  name="Policies Converted" 
+                  stroke="#52B69A" 
+                  strokeWidth={2.5} 
+                  dot={{ r: 4, fill: '#52B69A' }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -140,7 +191,7 @@ export const Dashboard = () => {
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card space-y-4">
           <div>
             <h3 className="text-base font-bold text-slate-900">Insurance Portfolio Distribution</h3>
-            <p className="text-xs text-slate-500">Breakdown by policy categories</p>
+            <p className="text-xs text-slate-500">Policy volume by insurance type</p>
           </div>
 
           <div className="h-52 flex items-center justify-center">
@@ -150,9 +201,9 @@ export const Dashboard = () => {
                   data={DASHBOARD_ANALYTICS.insuranceDistribution}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={4}
+                  innerRadius={55}
+                  outerRadius={78}
+                  paddingAngle={3}
                   dataKey="value"
                 >
                   {DASHBOARD_ANALYTICS.insuranceDistribution.map((entry, index) => (
@@ -186,7 +237,12 @@ export const Dashboard = () => {
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-bold text-slate-900">Recent High Lead Scores</h3>
-            <a href="#leads" className="text-xs font-bold text-brand-600 hover:underline">View All Leads →</a>
+            <button 
+              onClick={() => navigate('/leads')}
+              className="text-xs font-bold text-brand-600 hover:underline flex items-center space-x-1"
+            >
+              <span>View All Leads →</span>
+            </button>
           </div>
 
           <div className="divide-y divide-slate-100">
@@ -197,7 +253,7 @@ export const Dashboard = () => {
                     <span className="text-xs font-bold text-slate-900">{lead.customerName}</span>
                     <span className="badge badge-blue text-[10px]">{lead.insuranceType}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Assigned to: {lead.assignedStaff} • {lead.city}</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Assigned: {lead.assignedStaff} • {lead.city}</p>
                 </div>
                 <div className="text-right">
                   <span className="text-xs font-extrabold text-brand-700">₹ {lead.estimatedPremium.toLocaleString()}</span>
@@ -216,7 +272,12 @@ export const Dashboard = () => {
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-bold text-slate-900">Today's Scheduled Follow-ups</h3>
-            <a href="#followups" className="text-xs font-bold text-brand-600 hover:underline">Open Calendar →</a>
+            <button 
+              onClick={() => navigate('/followups')}
+              className="text-xs font-bold text-brand-600 hover:underline flex items-center space-x-1"
+            >
+              <span>Open Calendar →</span>
+            </button>
           </div>
 
           <div className="space-y-3">
@@ -224,7 +285,7 @@ export const Dashboard = () => {
               <div key={fl.id} className="p-3 rounded-xl border border-slate-200/60 bg-slate-50/50 flex items-center justify-between">
                 <div className="flex items-start space-x-3">
                   <div className="p-2 rounded-lg bg-brand-50 text-brand-600 font-bold text-xs">
-                    {fl.type}
+                    {fl.type === 'CALL' ? <Phone className="h-4 w-4" /> : <Send className="h-4 w-4" />}
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-slate-900">{fl.customerName}</h4>
@@ -243,6 +304,135 @@ export const Dashboard = () => {
         </div>
 
       </div>
+
+      {/* Add Lead Modal (Triggered by Dashboard Button) */}
+      {showAddLeadModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in duration-150">
+            <div className="px-6 py-4 bg-[#1E6091] text-white flex items-center justify-between">
+              <h3 className="font-bold text-sm">Add New Customer Lead</h3>
+              <button onClick={() => setShowAddLeadModal(false)} className="text-white/80 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddLeadSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Customer Full Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={newLead.customerName}
+                  onChange={(e) => setNewLead({ ...newLead, customerName: e.target.value })}
+                  placeholder="e.g. Ramesh Chandra"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={newLead.mobileNumber}
+                    onChange={(e) => setNewLead({ ...newLead, mobileNumber: e.target.value })}
+                    placeholder="+91 98765 43210"
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Insurance Category</label>
+                  <select 
+                    value={newLead.insuranceType}
+                    onChange={(e) => setNewLead({ ...newLead, insuranceType: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none"
+                  >
+                    <option value="Health Insurance">Health Insurance</option>
+                    <option value="Life Insurance">Life Insurance</option>
+                    <option value="Motor Insurance">Motor Insurance</option>
+                    <option value="Corporate Fire">Corporate Fire</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Estimated Premium (₹)</label>
+                <input 
+                  type="number" 
+                  required 
+                  value={newLead.estimatedPremium}
+                  onChange={(e) => setNewLead({ ...newLead, estimatedPremium: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                />
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setShowAddLeadModal(false)} className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-[#1E6091] text-white text-xs font-bold shadow">Save Lead</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Issue Policy Modal (Triggered by Dashboard Button) */}
+      {showIssuePolicyModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in duration-150">
+            <div className="px-6 py-4 bg-[#1E6091] text-white flex items-center justify-between">
+              <h3 className="font-bold text-sm">Issue New Policy Certificate</h3>
+              <button onClick={() => setShowIssuePolicyModal(false)} className="text-white/80 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleIssuePolicySubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Select Customer</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={newPolicy.customerName}
+                  onChange={(e) => setNewPolicy({ ...newPolicy, customerName: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Insurance Company</label>
+                  <select 
+                    value={newPolicy.insuranceCompany}
+                    onChange={(e) => setNewPolicy({ ...newPolicy, insuranceCompany: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none"
+                  >
+                    <option value="HDFC ERGO General Insurance">HDFC ERGO</option>
+                    <option value="Star Health Insurance">Star Health</option>
+                    <option value="Tata AIG General">Tata AIG</option>
+                    <option value="ICICI Prudential Life">ICICI Prudential</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Gross Premium (₹)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={newPolicy.grossPremium}
+                    onChange={(e) => setNewPolicy({ ...newPolicy, grossPremium: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-600 outline-none" 
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setShowIssuePolicyModal(false)} className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-[#1E6091] text-white text-xs font-bold shadow">Confirm Policy Issuance</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

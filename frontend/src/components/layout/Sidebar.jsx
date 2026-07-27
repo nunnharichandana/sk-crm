@@ -20,17 +20,17 @@ export const Sidebar = () => {
   const { user } = useAuth();
 
   const navItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER', 'TEAM_LEADER', 'STAFF_ADVISOR'] },
-    { label: 'Lead Management', path: '/leads', icon: Users, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER', 'TEAM_LEADER', 'STAFF_ADVISOR'] },
-    { label: 'Follow-ups & Calendar', path: '/followups', icon: PhoneCall, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER', 'TEAM_LEADER', 'STAFF_ADVISOR'] },
-    { label: 'Customer 360', path: '/customers', icon: UserCheck, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER', 'TEAM_LEADER', 'STAFF_ADVISOR'] },
-    { label: 'Policies & Calculator', path: '/policies', icon: FileText, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER', 'TEAM_LEADER', 'STAFF_ADVISOR'] },
-    { label: 'Claims Module', path: '/claims', icon: ShieldAlert, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER', 'TEAM_LEADER', 'STAFF_ADVISOR'] },
-    { label: 'Renewals Engine', path: '/renewals', icon: RotateCcw, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER', 'TEAM_LEADER', 'STAFF_ADVISOR'] },
-    { label: 'Staff & Manager Portal', path: '/staff', icon: Award, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER', 'TEAM_LEADER'] },
-    { label: 'Reports & Analytics', path: '/reports', icon: BarChart3, roles: ['SUPER_ADMIN', 'ADMIN', 'REGIONAL_MANAGER', 'BRANCH_MANAGER'] },
-    { label: 'Admin & Audit Logs', path: '/admin', icon: ShieldCheck, roles: ['SUPER_ADMIN', 'ADMIN'] },
-    { label: 'System Settings', path: '/settings', icon: Settings, roles: ['SUPER_ADMIN', 'ADMIN'] },
+    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Lead Management', path: '/leads', icon: Users, roles: ['ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Follow-ups & Calendar', path: '/followups', icon: PhoneCall, roles: ['ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Customer 360', path: '/customers', icon: UserCheck, roles: ['ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Policies & Calculator', path: '/policies', icon: FileText, roles: ['ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Claims Module', path: '/claims', icon: ShieldAlert, roles: ['ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Renewals Engine', path: '/renewals', icon: RotateCcw, roles: ['ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Staff & Manager Portal', path: '/staff', icon: Award, roles: ['ADMIN', 'MANAGER', 'TEAM_LEADER'] },
+    { label: 'Reports & Analytics', path: '/reports', icon: BarChart3, roles: ['ADMIN', 'MANAGER'] },
+    { label: 'Admin & Audit Logs', path: '/admin', icon: ShieldCheck, roles: ['ADMIN'] },
+    { label: 'System Settings', path: '/settings', icon: Settings, roles: ['ADMIN'] },
   ];
 
   const allowedNav = navItems.filter(item => item.roles.includes(user.role));

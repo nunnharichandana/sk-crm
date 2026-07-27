@@ -3,22 +3,20 @@
 export const INITIAL_USER = {
   id: 1,
   employeeId: 'EMP001',
-  name: 'Rajesh Kumar',
-  email: 'superadmin@sksmartinsurance.com',
-  role: 'SUPER_ADMIN', // SUPER_ADMIN, ADMIN, REGIONAL_MANAGER, BRANCH_MANAGER, TEAM_LEADER, STAFF_ADVISOR
-  roleDisplayName: 'Super Admin',
+  name: 'Sunita Sharma',
+  email: 'admin@sksmartinsurance.com',
+  role: 'ADMIN', // ADMIN, MANAGER, TEAM_LEADER, STAFF
+  roleDisplayName: 'Admin',
   branch: 'Corporate Headquarters (Mumbai)',
   avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150',
   permissions: ['ALL']
 };
 
 export const MOCK_ROLES = [
-  { id: 'SUPER_ADMIN', name: 'Super Admin', desc: 'Full System Control & Configuration' },
-  { id: 'ADMIN', name: 'Administrator', desc: 'User Management & Branch Settings' },
-  { id: 'REGIONAL_MANAGER', name: 'Regional Manager', desc: 'Multi-branch performance monitoring' },
-  { id: 'BRANCH_MANAGER', name: 'Branch Manager', desc: 'Branch operations & lead allocation' },
-  { id: 'TEAM_LEADER', name: 'Team Leader', desc: 'Team oversight & followup review' },
-  { id: 'STAFF_ADVISOR', name: 'Insurance Advisor', desc: 'Lead management, sales & policy issuance' },
+  { id: 'ADMIN', name: 'Admin', desc: 'System Configuration & User Management' },
+  { id: 'MANAGER', name: 'Manager', desc: 'Branch & Team Performance Operations' },
+  { id: 'TEAM_LEADER', name: 'Team Leader', desc: 'Team Lead Allocation & Review' },
+  { id: 'STAFF', name: 'Staff', desc: 'Client Advisor, Lead & Policy Issuance' },
 ];
 
 export const MOCK_BRANCHES = [
@@ -262,10 +260,10 @@ export const MOCK_CLAIMS = [
 
 export const MOCK_STAFF = [
   {
-    id: 6,
-    employeeId: 'EMP006',
+    id: 4,
+    employeeId: 'EMP004',
     name: 'Priya Nair',
-    role: 'Insurance Advisor',
+    role: 'Staff Advisor',
     branch: 'Corporate Headquarters',
     email: 'priya.advisor@sksmartinsurance.com',
     target: 500000,
@@ -275,10 +273,10 @@ export const MOCK_STAFF = [
     rating: 4.9
   },
   {
-    id: 7,
-    employeeId: 'EMP007',
+    id: 5,
+    employeeId: 'EMP005',
     name: 'Amit Verma',
-    role: 'Insurance Advisor',
+    role: 'Staff Advisor',
     branch: 'Delhi NCR Branch',
     email: 'amit.advisor@sksmartinsurance.com',
     target: 500000,
@@ -288,8 +286,8 @@ export const MOCK_STAFF = [
     rating: 4.7
   },
   {
-    id: 5,
-    employeeId: 'EMP005',
+    id: 3,
+    employeeId: 'EMP003',
     name: 'Rohan Mehta',
     role: 'Team Leader',
     branch: 'Corporate Headquarters',
@@ -303,10 +301,10 @@ export const MOCK_STAFF = [
 ];
 
 export const MOCK_AUDIT_LOGS = [
-  { id: 1, user: 'Super Admin', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'Successful JWT Login' },
+  { id: 1, user: 'Admin', action: 'SYSTEM_LOGIN', module: 'Authentication', timestamp: '2026-07-27 10:45:12', ip: '192.168.1.100', details: 'Successful Admin Login' },
   { id: 2, user: 'Priya Nair', action: 'ISSUE_POLICY', module: 'Policy Module', timestamp: '2026-07-27 09:30:22', ip: '192.168.1.105', details: 'Issued policy POL-HDFC-2026-78901' },
   { id: 3, user: 'Ananya Deshmukh', action: 'TRANSFER_LEAD', module: 'Lead Management', timestamp: '2026-07-26 16:15:00', ip: '192.168.1.102', details: 'Re-assigned lead LD-2026-003 to Amit Verma' },
-  { id: 4, user: 'Amit Verma', action: 'EXPORT_REPORT', module: 'Analytics & Reports', timestamp: '2026-07-26 14:00:10', ip: '192.168.1.108', details: 'Exported Monthly Lead Summary as PDF' },
+  { id: 4, user: 'Amit Verma', action: 'EXPORT_REPORT', module: 'Analytics & Reports', timestamp: '2026-07-26 14:00:10', ip: '192.168.1.108', details: 'Exported Monthly Lead Summary' },
 ];
 
 export const DASHBOARD_ANALYTICS = {
@@ -320,11 +318,11 @@ export const DASHBOARD_ANALYTICS = {
     { day: 'Sun', newLeads: 25, converted: 8, revenue: 120000 },
   ],
   insuranceDistribution: [
-    { name: 'Health Insurance', value: 42, color: '#0A4DA2' },
-    { name: 'Life & Term Insurance', value: 28, color: '#1976D2' },
-    { name: 'Motor & Bike Insurance', value: 18, color: '#38BDF8' },
-    { name: 'Corporate & Fire', value: 8, color: '#6366F1' },
-    { name: 'Travel & Marine', value: 4, color: '#93C5FD' },
+    { name: 'Health Insurance', value: 42, color: '#1E6091' },
+    { name: 'Life & Term Insurance', value: 28, color: '#1A759F' },
+    { name: 'Motor & Bike Insurance', value: 18, color: '#52B69A' },
+    { name: 'Corporate & Fire', value: 8, color: '#34A0A4' },
+    { name: 'Travel & Marine', value: 4, color: '#76C893' },
   ],
   branchPerformance: [
     { branch: 'HQ Mumbai', leads: 420, policies: 145, revenue: 4850000 },

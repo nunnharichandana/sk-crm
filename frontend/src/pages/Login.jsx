@@ -6,7 +6,7 @@ import { ShieldCheck, Lock, Mail, ArrowRight, CheckCircle2 } from 'lucide-react'
 export const Login = () => {
   const { login, switchRole } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('superadmin@sksmartinsurance.com');
+  const [email, setEmail] = useState('admin@sksmartinsurance.com');
   const [password, setPassword] = useState('Password@123');
 
   const handleSubmit = (e) => {
@@ -32,7 +32,7 @@ export const Login = () => {
       <div className="w-full max-w-4xl bg-white rounded-2xl shadow-premium border border-slate-200 grid grid-cols-1 md:grid-cols-2 overflow-hidden z-10">
         
         {/* Left Info Panel */}
-        <div className="bg-[#0A4DA2] p-8 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="bg-[#1E6091] p-8 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20">
@@ -46,22 +46,22 @@ export const Login = () => {
 
             <div className="pt-4 space-y-4">
               <h2 className="text-2xl font-bold tracking-tight leading-snug">
-                Powering Next-Gen Insurance Brokerage Operations
+                Powering Next-Gen Insurance Operations
               </h2>
               <p className="text-xs text-brand-100/80 leading-relaxed">
-                Seamless end-to-end management for Leads, Policies, Claims, Multi-Channel Follow-ups, and Multi-Branch Analytics.
+                Streamlined portal for Admin, Manager, Team Leader, and Staff Advisors.
               </p>
             </div>
 
             <div className="space-y-2 pt-2">
               {[
-                'JWT Secured Role-Based Authorization',
-                'Real-Time Recharts Executive Dashboards',
+                'JWT Secured Authorization',
+                'Executive Analytics & Standard Linear Graphs',
                 'Automated Renewal & WhatsApp Reminders',
-                'Audit Logging & ISO Compliance Ready'
+                'Audit Logging & Compliance Ready'
               ].map((feat, i) => (
                 <div key={i} className="flex items-center space-x-2 text-xs text-brand-50">
-                  <CheckCircle2 className="h-4 w-4 text-brand-300" />
+                  <CheckCircle2 className="h-4 w-4 text-brand-200" />
                   <span>{feat}</span>
                 </div>
               ))}
@@ -78,7 +78,7 @@ export const Login = () => {
           <div>
             <div className="mb-6">
               <h3 className="text-xl font-bold text-slate-900">Sign in to CRM</h3>
-              <p className="text-xs text-slate-500 mt-1">Enter your employee credentials to proceed</p>
+              <p className="text-xs text-slate-500 mt-1">Select account role or enter employee credentials</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,45 +115,45 @@ export const Login = () => {
                   <input type="checkbox" defaultChecked className="rounded text-brand-600 border-slate-300 focus:ring-brand-500" />
                   <span>Remember session</span>
                 </label>
-                <a href="#forgot" className="text-brand-600 font-bold hover:underline">Forgot password?</a>
+                <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Password reset link sent to official email!"); }} className="text-brand-600 font-bold hover:underline">Forgot password?</a>
               </div>
 
               <button 
                 type="submit"
-                className="w-full py-3 bg-[#0A4DA2] hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center space-x-2"
+                className="w-full py-3 bg-[#1E6091] hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center space-x-2"
               >
                 <span>Log In to Dashboard</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </form>
 
-            {/* One-Click Quick Role Switch Demo Launchers */}
+            {/* Restricted 4 Role Quick Launch Buttons */}
             <div className="mt-6 pt-4 border-t border-slate-100">
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Instant Quick Role Demo</p>
+              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Login as:</p>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <button 
-                  onClick={() => handleQuickLogin('SUPER_ADMIN', 'superadmin@sksmartinsurance.com')}
-                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
-                >
-                  👑 Super Admin
-                </button>
-                <button 
-                  onClick={() => handleQuickLogin('BRANCH_MANAGER', 'bm.mumbai@sksmartinsurance.com')}
-                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
-                >
-                  🏢 Branch Manager
-                </button>
-                <button 
-                  onClick={() => handleQuickLogin('STAFF_ADVISOR', 'priya.advisor@sksmartinsurance.com')}
-                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
-                >
-                  👤 Advisor / Staff
-                </button>
                 <button 
                   onClick={() => handleQuickLogin('ADMIN', 'admin@sksmartinsurance.com')}
                   className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
                 >
-                  ⚙️ Admin User
+                  ⚙️ Admin
+                </button>
+                <button 
+                  onClick={() => handleQuickLogin('MANAGER', 'bm.mumbai@sksmartinsurance.com')}
+                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
+                >
+                  🏢 Manager
+                </button>
+                <button 
+                  onClick={() => handleQuickLogin('TEAM_LEADER', 'tl.health@sksmartinsurance.com')}
+                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
+                >
+                  👥 Team Leader
+                </button>
+                <button 
+                  onClick={() => handleQuickLogin('STAFF', 'priya.advisor@sksmartinsurance.com')}
+                  className="p-2 rounded-lg bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-200 text-slate-700 font-semibold text-left transition"
+                >
+                  👤 Staff Advisor
                 </button>
               </div>
             </div>
