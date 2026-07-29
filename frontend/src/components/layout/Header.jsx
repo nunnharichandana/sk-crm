@@ -4,13 +4,24 @@ import { MOCK_ROLES, MOCK_LEADS, MOCK_POLICIES, MOCK_CLAIMS, MOCK_STAFF } from '
 import { Logo } from '../common/Logo';
 import { 
   Search, 
-  MapPin, 
   ChevronDown, 
   UserCheck, 
   LogOut, 
   User,
   ExternalLink,
-  X
+  X,
+  FileText,
+  Briefcase,
+  ShieldAlert,
+  Phone,
+  Mail,
+  MapPin,
+  CheckCircle2,
+  AlertCircle,
+  Eye,
+  IndianRupee,
+  Building2,
+  Calendar
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,6 +34,9 @@ export const Header = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
+  // Full Rich Search Detail Modal State
+  const [activeCustomerDetail, setActiveCustomerDetail] = useState(null);
 
   const searchRef = useRef(null);
   const roleRef = useRef(null);
@@ -38,78 +52,108 @@ export const Header = () => {
 
     const term = searchTerm.toLowerCase().trim();
 
+    // Match Leads
     const matchingLeads = MOCK_LEADS.filter(l => 
       l.customerName.toLowerCase().includes(term) || 
       l.id.toLowerCase().includes(term) ||
       l.mobileNumber.includes(term) ||
       l.email.toLowerCase().includes(term) ||
       l.insuranceType.toLowerCase().includes(term)
-    ).map(l => ({ 
-      id: l.id,
-      type: 'LEAD', 
-      title: `${l.id} - ${l.customerName}`, 
-      sub: `Lead • ${l.insuranceType} (${l.mobileNumber})`, 
-      link: '/leads' 
-    }));
+    );
 
+    // Match Policies
     const matchingPolicies = MOCK_POLICIES.filter(p => 
       p.customerName.toLowerCase().includes(term) || 
       p.id.toLowerCase().includes(term) ||
       p.insuranceCompany.toLowerCase().includes(term)
-    ).map(p => ({ 
-      id: p.id,
-      type: 'POLICY', 
-      title: `${p.id} - ${p.customerName}`, 
-      sub: `Policy • ${p.insuranceCompany} (₹${p.grossPremium.toLocaleString()})`, 
-      link: '/policies' 
-    }));
+    );
 
+    // Match Claims
     const matchingClaims = MOCK_CLAIMS.filter(c => 
       c.customerName.toLowerCase().includes(term) || 
       c.id.toLowerCase().includes(term) ||
       c.policyNumber.toLowerCase().includes(term) ||
       c.hospitalName.toLowerCase().includes(term)
-    ).map(c => ({ 
-      id: c.id,
-      type: 'CLAIM', 
-      title: `${c.id} - ${c.customerName}`, 
-      sub: `Claim • ${c.hospitalName} (${c.status})`, 
-      link: '/claims' 
-    }));
+    );
 
-    const matchingStaff = MOCK_STAFF.filter(s =>
-      s.name.toLowerCase().includes(term) ||
-      s.email.toLowerCase().includes(term) ||
-      s.employeeId.toLowerCase().includes(term)
-    ).map(s => ({
-      id: s.employeeId,
-      type: 'STAFF',
-      title: `${s.name} (${s.employeeId})`,
-      sub: `Staff • ${s.role} (${s.email})`,
-      link: '/staff'
-    }));
+    // Build unique search result items
+    const combined = [];
 
-    const combined = [...matchingLeads, ...matchingPolicies, ...matchingClaims, ...matchingStaff];
+    matchingLeads.forEach(l => {
+      combined.push({
+        id: l.id,
+        name: l.customerName,
+        type: 'LEAD',
+        title: `${l.customerName} (${l.id})`,
+        sub: `Lead • ${l.insuranceType} • ₹${l.estimatedPremium.toLocaleString()}`,
+        mobile: l.mobileNumber,
+        email: l.email,
+        city: l.city,
+        leadObj: l,
+        policiesObj: matchingPolicies.filter(p => p.customerName.toLowerCase() === l.customerName.toLowerCase()),
+        claimsObj: matchingClaims.filter(c => c.customerName.toLowerCase() === l.customerName.toLowerCase()),
+        link: '/leads'
+      });
+    });
+
+    matchingPolicies.forEach(p => {
+      if (!combined.some(c => c.name.toLowerCase() === p.customerName.toLowerCase())) {
+        combined.push({
+          id: p.id,
+          name: p.customerName,
+          type: 'POLICY',
+          title: `${p.customerName} (${p.id})`,
+          sub: `Policy • ${p.insuranceCompany} • ₹${p.grossPremium.toLocaleString()}`,
+          mobile: '+91 98423 11223',
+          email: p.customerName.toLowerCase().replace(' ', '.') + '@gmail.com',
+          city: 'Kanchipuram',
+          leadObj: null,
+          policiesObj: [p],
+          claimsObj: matchingClaims.filter(c => c.customerName.toLowerCase() === p.customerName.toLowerCase()),
+          link: '/policies'
+        });
+      }
+    });
+
     setSearchResults(combined);
     setShowSearchDropdown(true);
   }, [searchTerm]);
+
+  const openFullCustomerDetail = (item) => {
+    setShowSearchDropdown(false);
+    setActiveCustomerDetail({
+      name: item.name,
+      code: item.id,
+      mobile: item.mobile || '+91 98423 11223',
+      email: item.email || `${item.name.toLowerCase().replace(' ', '.')}@gmail.com`,
+      city: item.city || 'Kanchipuram, Tamil Nadu',
+      pan: 'ABCDE' + Math.floor(1000 + Math.random() * 9000) + 'F',
+      aadhaar: 'XXXX-XXXX-' + Math.floor(1000 + Math.random() * 9000),
+      kycStatus: 'VERIFIED',
+      advisor: 'Priya Nair',
+      leads: item.leadObj ? [item.leadObj] : MOCK_LEADS.filter(l => l.customerName.toLowerCase().includes(item.name.toLowerCase())),
+      policies: item.policiesObj && item.policiesObj.length ? item.policiesObj : MOCK_POLICIES.filter(p => p.customerName.toLowerCase().includes(item.name.toLowerCase())),
+      claims: item.claimsObj && item.claimsObj.length ? item.claimsObj : MOCK_CLAIMS.filter(c => c.customerName.toLowerCase().includes(item.name.toLowerCase())),
+      investments: [
+        { id: 'INV-2026-901', type: 'SIP Mutual Fund', amount: 50000, rate: '14.5%', status: 'ACTIVE' },
+        { id: 'INV-2026-902', type: 'Fixed Deposit', amount: 200000, rate: '7.8%', status: 'APPROVED' }
+      ]
+    });
+  };
 
   // Handle Enter Key press on search input
   const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       if (searchResults.length > 0) {
-        const topResult = searchResults[0];
-        navigate(topResult.link);
-        setShowSearchDropdown(false);
-        setSearchTerm('');
+        openFullCustomerDetail(searchResults[0]);
       } else {
-        alert(`No records found for "${searchTerm}". Try searching by customer name, policy number, or phone.`);
+        alert(`No matching records found for "${searchTerm}".`);
       }
     }
   };
 
-  // Click outside listener for Search, Role, and Profile dropdowns
+  // Click outside listener
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -141,7 +185,7 @@ export const Header = () => {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input 
               type="text"
-              placeholder="Search Customer, Policy #, Lead ID, Mobile, Claim or Staff..."
+              placeholder="Search Customer Name, Policy #, Lead ID, Mobile or Claim..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleSearchKeyDown}
@@ -155,7 +199,7 @@ export const Header = () => {
                   setSearchResults([]);
                   setShowSearchDropdown(false);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -165,28 +209,27 @@ export const Header = () => {
           {/* Live Search Results Dropdown */}
           {showSearchDropdown && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in duration-150">
-              <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <span className="text-[11px] font-extrabold text-slate-600 uppercase">Search Results ({searchResults.length})</span>
-                <span className="text-[10px] text-slate-400">Press Enter or click result</span>
+              <div className="px-4 py-2.5 bg-[#1E6091] text-white flex items-center justify-between">
+                <span className="text-[11px] font-extrabold uppercase">Search Results ({searchResults.length})</span>
+                <span className="text-[10px] text-blue-100">Click result for Full 360° Info</span>
               </div>
 
-              <div className="max-h-64 overflow-y-auto divide-y divide-slate-100">
+              <div className="max-h-72 overflow-y-auto divide-y divide-slate-100">
                 {searchResults.length > 0 ? (
                   searchResults.map((res, i) => (
                     <div 
                       key={i}
-                      onClick={() => {
-                        navigate(res.link);
-                        setShowSearchDropdown(false);
-                        setSearchTerm('');
-                      }}
-                      className="p-3 hover:bg-brand-50/50 cursor-pointer transition flex items-center justify-between text-xs"
+                      onClick={() => openFullCustomerDetail(res)}
+                      className="p-3 hover:bg-brand-50/60 cursor-pointer transition flex items-center justify-between text-xs group"
                     >
                       <div>
-                        <span className="font-bold text-slate-900 block">{res.title}</span>
-                        <span className="text-[10px] text-slate-500">{res.sub}</span>
+                        <span className="font-extrabold text-slate-900 block group-hover:text-[#1E6091] transition">{res.title}</span>
+                        <span className="text-[10px] text-slate-500 block mt-0.5">{res.sub}</span>
                       </div>
-                      <ExternalLink className="h-3.5 w-3.5 text-[#1E6091]" />
+                      <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-brand-50 text-[#1E6091] font-bold text-[10px]">
+                        <Eye className="h-3 w-3" />
+                        <span>View All Info</span>
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -294,6 +337,186 @@ export const Header = () => {
         </div>
 
       </div>
+
+      {/* FULL COMPREHENSIVE CUSTOMER SEARCH DETAIL MODAL */}
+      {activeCustomerDetail && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden animate-in fade-in duration-200">
+            
+            {/* Header */}
+            <div className="px-6 py-4 bg-[#1E6091] text-white flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-xl bg-white/10 backdrop-blur-md">
+                  <UserCheck className="h-5 w-5 text-amber-300" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base">{activeCustomerDetail.name}</h3>
+                  <p className="text-xs text-blue-100">Customer Code: {activeCustomerDetail.code} • Kanchipuram Office</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setActiveCustomerDetail(null)}
+                className="text-white/80 hover:text-white cursor-pointer"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Content Body */}
+            <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto text-xs">
+              
+              {/* Profile Card & KYC Details */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Mobile & Contact</span>
+                  <span className="font-extrabold text-slate-900 flex items-center space-x-1 mt-0.5">
+                    <Phone className="h-3.5 w-3.5 text-[#1E6091]" />
+                    <span>{activeCustomerDetail.mobile}</span>
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Email Address</span>
+                  <span className="font-bold text-slate-800 flex items-center space-x-1 mt-0.5 truncate">
+                    <Mail className="h-3.5 w-3.5 text-[#1E6091]" />
+                    <span>{activeCustomerDetail.email}</span>
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">KYC Verification Status</span>
+                  <span className="badge badge-green font-extrabold flex items-center space-x-1 mt-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <span>{activeCustomerDetail.kycStatus}</span>
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">PAN Number</span>
+                  <span className="font-mono font-bold text-slate-900">{activeCustomerDetail.pan}</span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Aadhaar Card #</span>
+                  <span className="font-mono font-bold text-slate-900">{activeCustomerDetail.aadhaar}</span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Assigned Advisor</span>
+                  <span className="font-bold text-[#1E6091]">{activeCustomerDetail.advisor}</span>
+                </div>
+              </div>
+
+              {/* SECTION 1: Active Leads */}
+              <div className="space-y-3">
+                <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2 border-b border-slate-100 pb-2">
+                  <FileText className="h-4 w-4 text-[#1E6091]" />
+                  <span>Leads & Inquiries ({activeCustomerDetail.leads.length})</span>
+                </h4>
+
+                {activeCustomerDetail.leads.length > 0 ? (
+                  <div className="space-y-2">
+                    {activeCustomerDetail.leads.map((ld, lIdx) => (
+                      <div key={lIdx} className="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between">
+                        <div>
+                          <span className="font-extrabold text-[#1E6091] block">{ld.id} — {ld.insuranceType || ld.category}</span>
+                          <span className="text-slate-500">Est. Premium: <strong>₹{(ld.estimatedPremium || 35000).toLocaleString()}</strong> • Score: <strong>{ld.leadScore || 85}</strong></span>
+                        </div>
+                        <span className="badge badge-blue font-bold">{ld.status}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-400 italic">No active lead inquiries found.</p>
+                )}
+              </div>
+
+              {/* SECTION 2: Active Policies */}
+              <div className="space-y-3">
+                <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2 border-b border-slate-100 pb-2">
+                  <Building2 className="h-4 w-4 text-emerald-600" />
+                  <span>Policies Portfolio ({activeCustomerDetail.policies.length})</span>
+                </h4>
+
+                {activeCustomerDetail.policies.length > 0 ? (
+                  <div className="space-y-2">
+                    {activeCustomerDetail.policies.map((pol, pIdx) => (
+                      <div key={pIdx} className="p-3 rounded-xl bg-emerald-50/40 border border-emerald-200/80 flex items-center justify-between">
+                        <div>
+                          <span className="font-extrabold text-emerald-800 block">{pol.id} — {pol.insuranceCompany}</span>
+                          <span className="text-slate-600">Sum Insured: <strong>₹{pol.sumInsured.toLocaleString()}</strong> • Gross Premium: <strong>₹{pol.grossPremium.toLocaleString()}</strong></span>
+                        </div>
+                        <span className="badge badge-green font-bold">{pol.status}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-400 italic">No active insurance policies registered.</p>
+                )}
+              </div>
+
+              {/* SECTION 3: Claims History */}
+              <div className="space-y-3">
+                <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2 border-b border-slate-100 pb-2">
+                  <ShieldAlert className="h-4 w-4 text-rose-600" />
+                  <span>Claims History ({activeCustomerDetail.claims.length})</span>
+                </h4>
+
+                {activeCustomerDetail.claims.length > 0 ? (
+                  <div className="space-y-2">
+                    {activeCustomerDetail.claims.map((clm, cIdx) => (
+                      <div key={cIdx} className="p-3 rounded-xl bg-rose-50/40 border border-rose-200/80 flex items-center justify-between">
+                        <div>
+                          <span className="font-extrabold text-rose-800 block">{clm.id} (Policy: {clm.policyNumber})</span>
+                          <span className="text-slate-600">Claim Amount: <strong>₹{clm.claimAmount.toLocaleString()}</strong> • Hospital: <strong>{clm.hospitalName}</strong></span>
+                        </div>
+                        <span className="badge badge-purple font-bold">{clm.status}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-400 italic">No claims history recorded.</p>
+                )}
+              </div>
+
+              {/* SECTION 4: Investments Portfolio */}
+              <div className="space-y-3">
+                <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2 border-b border-slate-100 pb-2">
+                  <Briefcase className="h-4 w-4 text-purple-600" />
+                  <span>Investment Assets Portfolio</span>
+                </h4>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {activeCustomerDetail.investments.map((inv, iIdx) => (
+                    <div key={iIdx} className="p-3 rounded-xl bg-purple-50/40 border border-purple-200/80 flex items-center justify-between">
+                      <div>
+                        <span className="font-extrabold text-purple-900 block">{inv.id} — {inv.type}</span>
+                        <span className="text-slate-600">Amount: <strong>₹{inv.amount.toLocaleString()}</strong> • Est Return: <strong>{inv.rate}</strong></span>
+                      </div>
+                      <span className="badge badge-purple font-bold">{inv.status}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[11px] text-slate-400">All data synchronized from SK Smart Investments Central Database</span>
+                <button
+                  onClick={() => setActiveCustomerDetail(null)}
+                  className="px-5 py-2 rounded-xl bg-[#1E6091] text-white font-bold cursor-pointer shadow"
+                >
+                  Close 360° Report
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </header>
   );
 };
+
