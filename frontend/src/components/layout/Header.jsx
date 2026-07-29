@@ -1,6 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { MOCK_ROLES, MOCK_LEADS, MOCK_POLICIES, MOCK_CLAIMS, MOCK_STAFF } from '../../services/mockDataService';
+import { 
+  MOCK_ROLES, 
+  MOCK_LEADS, 
+  MOCK_POLICIES, 
+  MOCK_CLAIMS, 
+  MOCK_STAFF, 
+  MOCK_FOLLOWUPS 
+} from '../../services/mockDataService';
 import { Logo } from '../common/Logo';
 import { 
   Search, 
@@ -13,17 +20,22 @@ import {
   FileText,
   Briefcase,
   ShieldAlert,
-  Phone,
-  Mail,
-  MapPin,
-  CheckCircle2,
-  AlertCircle,
-  Eye,
-  IndianRupee,
+  PhoneCall,
+  Award,
+  Users,
   Building2,
-  Calendar
+  Calendar,
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+const MOCK_INVESTMENTS_LIST = [
+  { id: 'INV-2026-001', customerName: 'Arjun Singhania', type: 'SIP', amount: 50000, status: 'ACTIVE' },
+  { id: 'INV-2026-002', customerName: 'Deepika Padukone', type: 'MUTUAL_FUND', amount: 500000, status: 'PENDING' },
+  { id: 'INV-2026-003', customerName: 'Rahul Dravid', type: 'FIXED_DEPOSIT', amount: 1000000, status: 'APPROVED' },
+  { id: 'INV-2026-004', customerName: 'Sania Mirza', type: 'REAL_ESTATE', amount: 4500000, status: 'ACTIVE' }
+];
 
 export const Header = () => {
   const { user, switchRole, logout } = useAuth();
@@ -32,43 +44,48 @@ export const Header = () => {
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [categorizedResults, setCategorizedResults] = useState({
+    leads: [],
+    policies: [],
+    claims: [],
+    investments: [],
+    staff: [],
+    followups: [],
+    totalCount: 0
+  });
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-
-  // Full Rich Search Detail Modal State
-  const [activeCustomerDetail, setActiveCustomerDetail] = useState(null);
 
   const searchRef = useRef(null);
   const roleRef = useRef(null);
   const profileRef = useRef(null);
 
-  // Live Multi-Entity Search Logic (Leads, Policies, Claims, Staff)
+  // Universal Search across ENTIRE WEBSITE (8 Modules)
   useEffect(() => {
     if (!searchTerm.trim()) {
-      setSearchResults([]);
+      setCategorizedResults({ leads: [], policies: [], claims: [], investments: [], staff: [], followups: [], totalCount: 0 });
       setShowSearchDropdown(false);
       return;
     }
 
     const term = searchTerm.toLowerCase().trim();
 
-    // Match Leads
+    // 1. Leads
     const matchingLeads = MOCK_LEADS.filter(l => 
       l.customerName.toLowerCase().includes(term) || 
       l.id.toLowerCase().includes(term) ||
       l.mobileNumber.includes(term) ||
-      l.email.toLowerCase().includes(term) ||
       l.insuranceType.toLowerCase().includes(term)
     );
 
-    // Match Policies
+    // 2. Policies
     const matchingPolicies = MOCK_POLICIES.filter(p => 
       p.customerName.toLowerCase().includes(term) || 
       p.id.toLowerCase().includes(term) ||
-      p.insuranceCompany.toLowerCase().includes(term)
+      p.insuranceCompany.toLowerCase().includes(term) ||
+      p.type.toLowerCase().includes(term)
     );
 
-    // Match Claims
+    // 3. Claims
     const matchingClaims = MOCK_CLAIMS.filter(c => 
       c.customerName.toLowerCase().includes(term) || 
       c.id.toLowerCase().includes(term) ||
@@ -76,79 +93,69 @@ export const Header = () => {
       c.hospitalName.toLowerCase().includes(term)
     );
 
-    // Build unique search result items
-    const combined = [];
+    // 4. Investments
+    const matchingInvestments = MOCK_INVESTMENTS_LIST.filter(inv => 
+      inv.customerName.toLowerCase().includes(term) || 
+      inv.id.toLowerCase().includes(term) ||
+      inv.type.toLowerCase().includes(term)
+    );
 
-    matchingLeads.forEach(l => {
-      combined.push({
-        id: l.id,
-        name: l.customerName,
-        type: 'LEAD',
-        title: `${l.customerName} (${l.id})`,
-        sub: `Lead • ${l.insuranceType} • ₹${l.estimatedPremium.toLocaleString()}`,
-        mobile: l.mobileNumber,
-        email: l.email,
-        city: l.city,
-        leadObj: l,
-        policiesObj: matchingPolicies.filter(p => p.customerName.toLowerCase() === l.customerName.toLowerCase()),
-        claimsObj: matchingClaims.filter(c => c.customerName.toLowerCase() === l.customerName.toLowerCase()),
-        link: '/leads'
-      });
+    // 5. Staff Advisors & Employees
+    const matchingStaff = MOCK_STAFF.filter(s =>
+      s.name.toLowerCase().includes(term) ||
+      s.email.toLowerCase().includes(term) ||
+      s.employeeId.toLowerCase().includes(term) ||
+      s.role.toLowerCase().includes(term)
+    );
+
+    // 6. Follow-ups
+    const matchingFollowups = MOCK_FOLLOWUPS.filter(f =>
+      f.customerName.toLowerCase().includes(term) ||
+      f.id.toLowerCase().includes(term) ||
+      f.remarks.toLowerCase().includes(term)
+    );
+
+    const totalCount = matchingLeads.length + matchingPolicies.length + matchingClaims.length + matchingInvestments.length + matchingStaff.length + matchingFollowups.length;
+
+    setCategorizedResults({
+      leads: matchingLeads,
+      policies: matchingPolicies,
+      claims: matchingClaims,
+      investments: matchingInvestments,
+      staff: matchingStaff,
+      followups: matchingFollowups,
+      totalCount
     });
 
-    matchingPolicies.forEach(p => {
-      if (!combined.some(c => c.name.toLowerCase() === p.customerName.toLowerCase())) {
-        combined.push({
-          id: p.id,
-          name: p.customerName,
-          type: 'POLICY',
-          title: `${p.customerName} (${p.id})`,
-          sub: `Policy • ${p.insuranceCompany} • ₹${p.grossPremium.toLocaleString()}`,
-          mobile: '+91 98423 11223',
-          email: p.customerName.toLowerCase().replace(' ', '.') + '@gmail.com',
-          city: 'Kanchipuram',
-          leadObj: null,
-          policiesObj: [p],
-          claimsObj: matchingClaims.filter(c => c.customerName.toLowerCase() === p.customerName.toLowerCase()),
-          link: '/policies'
-        });
-      }
-    });
-
-    setSearchResults(combined);
     setShowSearchDropdown(true);
   }, [searchTerm]);
 
-  const openFullCustomerDetail = (item) => {
+  const handleNavigateToResult = (path) => {
     setShowSearchDropdown(false);
-    setActiveCustomerDetail({
-      name: item.name,
-      code: item.id,
-      mobile: item.mobile || '+91 98423 11223',
-      email: item.email || `${item.name.toLowerCase().replace(' ', '.')}@gmail.com`,
-      city: item.city || 'Kanchipuram, Tamil Nadu',
-      pan: 'ABCDE' + Math.floor(1000 + Math.random() * 9000) + 'F',
-      aadhaar: 'XXXX-XXXX-' + Math.floor(1000 + Math.random() * 9000),
-      kycStatus: 'VERIFIED',
-      advisor: 'Priya Nair',
-      leads: item.leadObj ? [item.leadObj] : MOCK_LEADS.filter(l => l.customerName.toLowerCase().includes(item.name.toLowerCase())),
-      policies: item.policiesObj && item.policiesObj.length ? item.policiesObj : MOCK_POLICIES.filter(p => p.customerName.toLowerCase().includes(item.name.toLowerCase())),
-      claims: item.claimsObj && item.claimsObj.length ? item.claimsObj : MOCK_CLAIMS.filter(c => c.customerName.toLowerCase().includes(item.name.toLowerCase())),
-      investments: [
-        { id: 'INV-2026-901', type: 'SIP Mutual Fund', amount: 50000, rate: '14.5%', status: 'ACTIVE' },
-        { id: 'INV-2026-902', type: 'Fixed Deposit', amount: 200000, rate: '7.8%', status: 'APPROVED' }
-      ]
-    });
+    setSearchTerm('');
+    navigate(path);
   };
 
   // Handle Enter Key press on search input
   const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (searchResults.length > 0) {
-        openFullCustomerDetail(searchResults[0]);
+      const { leads, policies, claims, investments, staff, followups } = categorizedResults;
+
+      if (leads.length > 0) {
+        handleNavigateToResult(`/leads?search=${encodeURIComponent(searchTerm)}`);
+      } else if (policies.length > 0) {
+        handleNavigateToResult(`/policies?search=${encodeURIComponent(searchTerm)}`);
+      } else if (investments.length > 0) {
+        handleNavigateToResult(`/investments?search=${encodeURIComponent(searchTerm)}`);
+      } else if (claims.length > 0) {
+        handleNavigateToResult(`/claims?search=${encodeURIComponent(searchTerm)}`);
+      } else if (staff.length > 0) {
+        handleNavigateToResult(`/staff?search=${encodeURIComponent(searchTerm)}`);
+      } else if (followups.length > 0) {
+        handleNavigateToResult(`/followups?search=${encodeURIComponent(searchTerm)}`);
       } else {
-        alert(`No matching records found for "${searchTerm}".`);
+        alert(`No records found across the website for "${searchTerm}".`);
       }
     }
   };
@@ -179,13 +186,13 @@ export const Header = () => {
           <Logo className="h-10 w-auto" />
         </div>
 
-        {/* Center: Robust Live Interactive Global Search Bar */}
+        {/* Center: Universal Website Search Bar */}
         <div className="flex-1 max-w-md relative" ref={searchRef}>
           <div className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input 
               type="text"
-              placeholder="Search Customer Name, Policy #, Lead ID, Mobile or Claim..."
+              placeholder="Search across entire website (Leads, Policies, Claims, Staff...)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleSearchKeyDown}
@@ -196,7 +203,7 @@ export const Header = () => {
               <button 
                 onClick={() => {
                   setSearchTerm('');
-                  setSearchResults([]);
+                  setCategorizedResults({ leads: [], policies: [], claims: [], investments: [], staff: [], followups: [], totalCount: 0 });
                   setShowSearchDropdown(false);
                 }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
@@ -206,37 +213,165 @@ export const Header = () => {
             )}
           </div>
 
-          {/* Live Search Results Dropdown */}
+          {/* Live Multi-Module Search Results Dropdown */}
           {showSearchDropdown && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in duration-150">
-              <div className="px-4 py-2.5 bg-[#1E6091] text-white flex items-center justify-between">
-                <span className="text-[11px] font-extrabold uppercase">Search Results ({searchResults.length})</span>
-                <span className="text-[10px] text-blue-100">Click result for Full 360° Info</span>
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in duration-150 max-h-[80vh] flex flex-col">
+              
+              <div className="px-4 py-2.5 bg-[#1E6091] text-white flex items-center justify-between shrink-0">
+                <span className="text-[11px] font-extrabold uppercase flex items-center space-x-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                  <span>Universal Website Search ({categorizedResults.totalCount} Matches)</span>
+                </span>
+                <span className="text-[10px] text-blue-100">Click result to open page</span>
               </div>
 
-              <div className="max-h-72 overflow-y-auto divide-y divide-slate-100">
-                {searchResults.length > 0 ? (
-                  searchResults.map((res, i) => (
-                    <div 
-                      key={i}
-                      onClick={() => openFullCustomerDetail(res)}
-                      className="p-3 hover:bg-brand-50/60 cursor-pointer transition flex items-center justify-between text-xs group"
-                    >
-                      <div>
-                        <span className="font-extrabold text-slate-900 block group-hover:text-[#1E6091] transition">{res.title}</span>
-                        <span className="text-[10px] text-slate-500 block mt-0.5">{res.sub}</span>
-                      </div>
-                      <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-brand-50 text-[#1E6091] font-bold text-[10px]">
-                        <Eye className="h-3 w-3" />
-                        <span>View All Info</span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-4 text-center text-xs text-slate-500">
-                    No matching records found for "{searchTerm}"
+              <div className="overflow-y-auto divide-y divide-slate-100 p-2 space-y-3">
+                
+                {categorizedResults.totalCount === 0 && (
+                  <div className="p-6 text-center text-xs text-slate-500 space-y-1">
+                    <p className="font-bold text-slate-700">No records found for "{searchTerm}"</p>
+                    <p className="text-[11px] text-slate-400">Try searching by Customer Name, Policy #, Lead ID, Hospital, or Staff Name</p>
                   </div>
                 )}
+
+                {/* 1. LEADS MATCHES */}
+                {categorizedResults.leads.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="px-3 py-1 bg-brand-50 rounded-lg text-[10px] font-extrabold text-[#1E6091] uppercase flex items-center space-x-1">
+                      <Users className="h-3 w-3" />
+                      <span>Lead Management ({categorizedResults.leads.length})</span>
+                    </div>
+                    {categorizedResults.leads.map(ld => (
+                      <div
+                        key={ld.id}
+                        onClick={() => handleNavigateToResult(`/leads`)}
+                        className="p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition flex items-center justify-between text-xs group border border-transparent hover:border-slate-200"
+                      >
+                        <div>
+                          <span className="font-bold text-slate-900 block group-hover:text-[#1E6091]">{ld.customerName} ({ld.id})</span>
+                          <span className="text-[10px] text-slate-500">Lead • {ld.insuranceType} • ₹{ld.estimatedPremium.toLocaleString()}</span>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#1E6091]" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 2. POLICIES MATCHES */}
+                {categorizedResults.policies.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="px-3 py-1 bg-emerald-50 rounded-lg text-[10px] font-extrabold text-emerald-700 uppercase flex items-center space-x-1">
+                      <FileText className="h-3 w-3" />
+                      <span>Policies Register ({categorizedResults.policies.length})</span>
+                    </div>
+                    {categorizedResults.policies.map(pol => (
+                      <div
+                        key={pol.id}
+                        onClick={() => handleNavigateToResult(`/policies`)}
+                        className="p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition flex items-center justify-between text-xs group border border-transparent hover:border-slate-200"
+                      >
+                        <div>
+                          <span className="font-bold text-slate-900 block group-hover:text-emerald-700">{pol.id} — {pol.customerName}</span>
+                          <span className="text-[10px] text-slate-500">Policy • {pol.insuranceCompany} • ₹{pol.grossPremium.toLocaleString()}</span>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-emerald-700" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 3. INVESTMENTS MATCHES */}
+                {categorizedResults.investments.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="px-3 py-1 bg-purple-50 rounded-lg text-[10px] font-extrabold text-purple-700 uppercase flex items-center space-x-1">
+                      <Briefcase className="h-3 w-3" />
+                      <span>Investments Register ({categorizedResults.investments.length})</span>
+                    </div>
+                    {categorizedResults.investments.map(inv => (
+                      <div
+                        key={inv.id}
+                        onClick={() => handleNavigateToResult(`/investments`)}
+                        className="p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition flex items-center justify-between text-xs group border border-transparent hover:border-slate-200"
+                      >
+                        <div>
+                          <span className="font-bold text-slate-900 block group-hover:text-purple-700">{inv.id} — {inv.customerName}</span>
+                          <span className="text-[10px] text-slate-500">Investment • {inv.type} • ₹{inv.amount.toLocaleString()}</span>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-purple-700" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 4. CLAIMS MATCHES */}
+                {categorizedResults.claims.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="px-3 py-1 bg-rose-50 rounded-lg text-[10px] font-extrabold text-rose-700 uppercase flex items-center space-x-1">
+                      <ShieldAlert className="h-3 w-3" />
+                      <span>Claims Module ({categorizedResults.claims.length})</span>
+                    </div>
+                    {categorizedResults.claims.map(clm => (
+                      <div
+                        key={clm.id}
+                        onClick={() => handleNavigateToResult(`/claims`)}
+                        className="p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition flex items-center justify-between text-xs group border border-transparent hover:border-slate-200"
+                      >
+                        <div>
+                          <span className="font-bold text-slate-900 block group-hover:text-rose-700">{clm.id} — {clm.customerName}</span>
+                          <span className="text-[10px] text-slate-500">Claim • {clm.hospitalName} • Status: {clm.status}</span>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-rose-700" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 5. STAFF MATCHES */}
+                {categorizedResults.staff.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="px-3 py-1 bg-amber-50 rounded-lg text-[10px] font-extrabold text-amber-700 uppercase flex items-center space-x-1">
+                      <Award className="h-3 w-3" />
+                      <span>Staff Advisors ({categorizedResults.staff.length})</span>
+                    </div>
+                    {categorizedResults.staff.map(st => (
+                      <div
+                        key={st.id}
+                        onClick={() => handleNavigateToResult(`/staff`)}
+                        className="p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition flex items-center justify-between text-xs group border border-transparent hover:border-slate-200"
+                      >
+                        <div>
+                          <span className="font-bold text-slate-900 block group-hover:text-amber-700">{st.name} ({st.employeeId})</span>
+                          <span className="text-[10px] text-slate-500">Staff • {st.role} • {st.email}</span>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-amber-700" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 6. FOLLOWUPS MATCHES */}
+                {categorizedResults.followups.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="px-3 py-1 bg-blue-50 rounded-lg text-[10px] font-extrabold text-blue-700 uppercase flex items-center space-x-1">
+                      <PhoneCall className="h-3 w-3" />
+                      <span>Follow-ups & Calendar ({categorizedResults.followups.length})</span>
+                    </div>
+                    {categorizedResults.followups.map(fl => (
+                      <div
+                        key={fl.id}
+                        onClick={() => handleNavigateToResult(`/followups`)}
+                        className="p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition flex items-center justify-between text-xs group border border-transparent hover:border-slate-200"
+                      >
+                        <div>
+                          <span className="font-bold text-slate-900 block group-hover:text-blue-700">{fl.id} — {fl.customerName}</span>
+                          <span className="text-[10px] text-slate-500">Follow-up • {fl.remarks}</span>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-blue-700" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
               </div>
             </div>
           )}
@@ -337,186 +472,6 @@ export const Header = () => {
         </div>
 
       </div>
-
-      {/* FULL COMPREHENSIVE CUSTOMER SEARCH DETAIL MODAL */}
-      {activeCustomerDetail && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden animate-in fade-in duration-200">
-            
-            {/* Header */}
-            <div className="px-6 py-4 bg-[#1E6091] text-white flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-xl bg-white/10 backdrop-blur-md">
-                  <UserCheck className="h-5 w-5 text-amber-300" />
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-base">{activeCustomerDetail.name}</h3>
-                  <p className="text-xs text-blue-100">Customer Code: {activeCustomerDetail.code} • Kanchipuram Office</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => setActiveCustomerDetail(null)}
-                className="text-white/80 hover:text-white cursor-pointer"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-
-            {/* Content Body */}
-            <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto text-xs">
-              
-              {/* Profile Card & KYC Details */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Mobile & Contact</span>
-                  <span className="font-extrabold text-slate-900 flex items-center space-x-1 mt-0.5">
-                    <Phone className="h-3.5 w-3.5 text-[#1E6091]" />
-                    <span>{activeCustomerDetail.mobile}</span>
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Email Address</span>
-                  <span className="font-bold text-slate-800 flex items-center space-x-1 mt-0.5 truncate">
-                    <Mail className="h-3.5 w-3.5 text-[#1E6091]" />
-                    <span>{activeCustomerDetail.email}</span>
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">KYC Verification Status</span>
-                  <span className="badge badge-green font-extrabold flex items-center space-x-1 mt-1">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    <span>{activeCustomerDetail.kycStatus}</span>
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">PAN Number</span>
-                  <span className="font-mono font-bold text-slate-900">{activeCustomerDetail.pan}</span>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Aadhaar Card #</span>
-                  <span className="font-mono font-bold text-slate-900">{activeCustomerDetail.aadhaar}</span>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Assigned Advisor</span>
-                  <span className="font-bold text-[#1E6091]">{activeCustomerDetail.advisor}</span>
-                </div>
-              </div>
-
-              {/* SECTION 1: Active Leads */}
-              <div className="space-y-3">
-                <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2 border-b border-slate-100 pb-2">
-                  <FileText className="h-4 w-4 text-[#1E6091]" />
-                  <span>Leads & Inquiries ({activeCustomerDetail.leads.length})</span>
-                </h4>
-
-                {activeCustomerDetail.leads.length > 0 ? (
-                  <div className="space-y-2">
-                    {activeCustomerDetail.leads.map((ld, lIdx) => (
-                      <div key={lIdx} className="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between">
-                        <div>
-                          <span className="font-extrabold text-[#1E6091] block">{ld.id} — {ld.insuranceType || ld.category}</span>
-                          <span className="text-slate-500">Est. Premium: <strong>₹{(ld.estimatedPremium || 35000).toLocaleString()}</strong> • Score: <strong>{ld.leadScore || 85}</strong></span>
-                        </div>
-                        <span className="badge badge-blue font-bold">{ld.status}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-slate-400 italic">No active lead inquiries found.</p>
-                )}
-              </div>
-
-              {/* SECTION 2: Active Policies */}
-              <div className="space-y-3">
-                <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2 border-b border-slate-100 pb-2">
-                  <Building2 className="h-4 w-4 text-emerald-600" />
-                  <span>Policies Portfolio ({activeCustomerDetail.policies.length})</span>
-                </h4>
-
-                {activeCustomerDetail.policies.length > 0 ? (
-                  <div className="space-y-2">
-                    {activeCustomerDetail.policies.map((pol, pIdx) => (
-                      <div key={pIdx} className="p-3 rounded-xl bg-emerald-50/40 border border-emerald-200/80 flex items-center justify-between">
-                        <div>
-                          <span className="font-extrabold text-emerald-800 block">{pol.id} — {pol.insuranceCompany}</span>
-                          <span className="text-slate-600">Sum Insured: <strong>₹{pol.sumInsured.toLocaleString()}</strong> • Gross Premium: <strong>₹{pol.grossPremium.toLocaleString()}</strong></span>
-                        </div>
-                        <span className="badge badge-green font-bold">{pol.status}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-slate-400 italic">No active insurance policies registered.</p>
-                )}
-              </div>
-
-              {/* SECTION 3: Claims History */}
-              <div className="space-y-3">
-                <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2 border-b border-slate-100 pb-2">
-                  <ShieldAlert className="h-4 w-4 text-rose-600" />
-                  <span>Claims History ({activeCustomerDetail.claims.length})</span>
-                </h4>
-
-                {activeCustomerDetail.claims.length > 0 ? (
-                  <div className="space-y-2">
-                    {activeCustomerDetail.claims.map((clm, cIdx) => (
-                      <div key={cIdx} className="p-3 rounded-xl bg-rose-50/40 border border-rose-200/80 flex items-center justify-between">
-                        <div>
-                          <span className="font-extrabold text-rose-800 block">{clm.id} (Policy: {clm.policyNumber})</span>
-                          <span className="text-slate-600">Claim Amount: <strong>₹{clm.claimAmount.toLocaleString()}</strong> • Hospital: <strong>{clm.hospitalName}</strong></span>
-                        </div>
-                        <span className="badge badge-purple font-bold">{clm.status}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-slate-400 italic">No claims history recorded.</p>
-                )}
-              </div>
-
-              {/* SECTION 4: Investments Portfolio */}
-              <div className="space-y-3">
-                <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2 border-b border-slate-100 pb-2">
-                  <Briefcase className="h-4 w-4 text-purple-600" />
-                  <span>Investment Assets Portfolio</span>
-                </h4>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {activeCustomerDetail.investments.map((inv, iIdx) => (
-                    <div key={iIdx} className="p-3 rounded-xl bg-purple-50/40 border border-purple-200/80 flex items-center justify-between">
-                      <div>
-                        <span className="font-extrabold text-purple-900 block">{inv.id} — {inv.type}</span>
-                        <span className="text-slate-600">Amount: <strong>₹{inv.amount.toLocaleString()}</strong> • Est Return: <strong>{inv.rate}</strong></span>
-                      </div>
-                      <span className="badge badge-purple font-bold">{inv.status}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[11px] text-slate-400">All data synchronized from SK Smart Investments Central Database</span>
-                <button
-                  onClick={() => setActiveCustomerDetail(null)}
-                  className="px-5 py-2 rounded-xl bg-[#1E6091] text-white font-bold cursor-pointer shadow"
-                >
-                  Close 360° Report
-                </button>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-      )}
-
     </header>
   );
 };
-
