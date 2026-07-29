@@ -60,7 +60,7 @@ export const Dashboard = () => {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-              Welcome back, {user?.name || 'Prakesh Gajendiran'}! 👋
+              Welcome back, {user?.name || 'Prakash Gajendiran'}! 👋
             </h1>
             <p className="text-xs sm:text-sm text-blue-100 max-w-2xl">
               Role: <strong className="text-white">{user?.roleDisplayName || 'Super Admin'}</strong> • Investment Portfolio, Income Stream & Lead Pipeline Overview.

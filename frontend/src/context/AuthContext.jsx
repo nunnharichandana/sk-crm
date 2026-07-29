@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     return {
       id: 'STF-001',
       employeeId: 'EMP-ADM-001',
-      name: 'Prakesh Gajendiran',
+      name: 'Prakash Gajendiran',
       email: 'admin@sksmartinvestments.com',
       role: 'SUPER_ADMIN',
       roleDisplayName: 'Super Admin',
@@ -51,7 +51,6 @@ export const AuthProvider = ({ children }) => {
     setUser(updatedUser);
     localStorage.setItem('crm_active_user', JSON.stringify(updatedUser));
 
-    // Live synchronize MOCK_STAFF array
     const staffIdx = MOCK_STAFF.findIndex(
       s => (updatedUser.email && s.email.toLowerCase() === updatedUser.email.toLowerCase()) || s.id === updatedUser.id
     );

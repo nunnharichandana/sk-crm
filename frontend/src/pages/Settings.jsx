@@ -18,13 +18,13 @@ import {
 
 export const Settings = () => {
   const { user, updateUserProfile } = useAuth();
-  const isAdmin = user?.role === 'ADMIN';
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
 
   const [activeTab, setActiveTab] = useState('PROFILE'); // PROFILE, COMPANY, SECURITY
 
   // Profile Form State
   const [profileForm, setProfileForm] = useState({
-    name: user?.name || 'Prakesh Gajendiran',
+    name: user?.name || 'Prakash Gajendiran',
     email: user?.email || 'admin@sksmartinvestments.com',
     phone: user?.phone || '+91 98423 11223',
     avatar: user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150',
@@ -104,7 +104,7 @@ export const Settings = () => {
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id)}
-              className={`pb-3 px-4 text-xs font-bold transition flex items-center space-x-2 border-b-2 ${
+              className={`pb-3 px-4 text-xs font-bold transition flex items-center space-x-2 border-b-2 cursor-pointer ${
                 activeTab === t.id ? 'border-brand-600 text-brand-700 font-extrabold' : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
@@ -223,7 +223,7 @@ export const Settings = () => {
             <div className="pt-2 flex justify-end">
               <button 
                 type="submit" 
-                className="px-6 py-2.5 rounded-xl bg-[#1E6091] hover:bg-brand-700 text-white font-bold text-xs shadow flex items-center space-x-2 transition"
+                className="px-6 py-2.5 rounded-xl bg-[#1E6091] hover:bg-brand-700 text-white font-bold text-xs shadow flex items-center space-x-2 transition cursor-pointer"
               >
                 <Save className="h-4 w-4" />
                 <span>Save Profile Changes</span>
@@ -310,7 +310,7 @@ export const Settings = () => {
             <div className="pt-2 flex justify-end">
               <button 
                 type="submit" 
-                className="px-5 py-2.5 rounded-xl bg-[#1E6091] text-white font-bold text-xs shadow"
+                className="px-5 py-2.5 rounded-xl bg-[#1E6091] text-white font-bold text-xs shadow cursor-pointer"
               >
                 Update Password
               </button>

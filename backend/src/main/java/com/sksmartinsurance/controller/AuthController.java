@@ -35,7 +35,7 @@ public class AuthController {
         userData.put("uid", uid);
         userData.put("name", name != null ? name : email.split("@")[0]);
         userData.put("email", email);
-        userData.put("role", "USER"); // Initial default role as per spec
+        userData.put("role", "USER");
         userData.put("status", "ACTIVE");
         userData.put("branchId", "BR-KNM-001");
         userData.put("createdAt", Instant.now().toString());
@@ -79,10 +79,9 @@ public class AuthController {
         Map<String, Object> userDoc = firestoreService.getDocument("users", uid);
 
         if (userDoc == null) {
-            // Default response if doc not populated yet
             return ResponseEntity.ok(Map.of(
                 "uid", uid,
-                "name", "Prakesh Gajendiran",
+                "name", "Prakash Gajendiran",
                 "email", "admin@sksmartinvestments.com",
                 "role", "SUPER_ADMIN",
                 "status", "ACTIVE"
