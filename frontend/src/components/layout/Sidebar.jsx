@@ -14,36 +14,38 @@ import {
   BarChart3, 
   ShieldCheck, 
   Settings, 
-  ChevronRight
+  ChevronRight,
+  Lock
 } from 'lucide-react';
 
 export const Sidebar = () => {
   const { user } = useAuth();
+  const currentRole = user?.role || 'STAFF';
 
+  // Strict Role-Based Access Matrix
   const navItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'VIEWER'] },
-    { label: 'Lead Management', path: '/leads', icon: Users, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'VIEWER'] },
-    { label: 'Follow-ups & Calendar', path: '/followups', icon: PhoneCall, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'VIEWER'] },
-    { label: 'Customer 360', path: '/customers', icon: UserCheck, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'VIEWER'] },
-    { label: 'Investments Register', path: '/investments', icon: Briefcase, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'VIEWER'] },
-    { label: 'Policies & Calculator', path: '/policies', icon: FileText, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'VIEWER'] },
-    { label: 'Claims Module', path: '/claims', icon: ShieldAlert, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'VIEWER'] },
-    { label: 'Renewals Engine', path: '/renewals', icon: RotateCcw, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'VIEWER'] },
+    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF', 'USER'] },
+    { label: 'Lead Management', path: '/leads', icon: Users, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Follow-ups & Calendar', path: '/followups', icon: PhoneCall, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Customer 360', path: '/customers', icon: UserCheck, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'TEAM_LEADER'] },
+    { label: 'Investments Register', path: '/investments', icon: Briefcase, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER'] },
+    { label: 'Policies & Calculator', path: '/policies', icon: FileText, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Claims Module', path: '/claims', icon: ShieldAlert, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF'] },
+    { label: 'Renewals Engine', path: '/renewals', icon: RotateCcw, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'TEAM_LEADER'] },
     { label: 'Staff & Roles Portal', path: '/staff', icon: Award, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER'] },
-    { label: 'Reports & Analytics', path: '/reports', icon: BarChart3, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'VIEWER'] },
+    { label: 'Reports & Analytics', path: '/reports', icon: BarChart3, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER'] },
     { label: 'Admin & Audit Logs', path: '/admin', icon: ShieldCheck, roles: ['SUPER_ADMIN', 'ADMIN'] },
-    { label: 'System Settings', path: '/settings', icon: Settings, roles: ['SUPER_ADMIN', 'ADMIN'] },
+    { label: 'System Settings', path: '/settings', icon: Settings, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'TEAM_LEADER', 'STAFF', 'USER'] },
   ];
 
-  const allowedNav = navItems.filter(item => 
-    item.roles.includes(user.role) || item.roles.includes('SUPER_ADMIN') || user.role === 'ADMIN'
-  );
+  const allowedNav = navItems.filter(item => item.roles.includes(currentRole));
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 min-h-[calc(100vh-61px)] flex flex-col justify-between py-4 shadow-sm">
       <div className="px-3 space-y-1">
-        <div className="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-          Main Navigation
+        <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+          <span>Role Navigation</span>
+          <span className="badge badge-blue text-[9px]">{user?.roleDisplayName || currentRole}</span>
         </div>
 
         {allowedNav.map((item) => {
@@ -78,8 +80,8 @@ export const Sidebar = () => {
       <div className="px-4 pt-4 border-t border-slate-100">
         <div className="p-3 rounded-xl bg-brand-50/60 border border-brand-100 flex items-center space-x-3">
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-slate-800 truncate">{user.name}</p>
-            <p className="text-[11px] text-[#1E6091] font-semibold truncate">{user.roleDisplayName}</p>
+            <p className="text-xs font-bold text-slate-800 truncate">{user?.name}</p>
+            <p className="text-[11px] text-[#1E6091] font-semibold truncate">{user?.roleDisplayName}</p>
           </div>
           <span className="h-2 w-2 rounded-full bg-emerald-500 ring-4 ring-emerald-100" />
         </div>
